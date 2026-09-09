@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getMarket } from '@/lib/market'
 
 // Validation for the four CMS-managed marketing content types. They share a
 // common core (identity, SEO, status) plus a per-type set of JSON section
@@ -134,7 +135,14 @@ export const UpdateLocationSchema = CreateLocationSchema.partial()
 // badge field in its form).
 
 export const CreateSeoPageSchema = z.object({
-  location_id: z.string().uuid('Select a state'),
+  // Geography is a property of the deployment, not the content: the .ae and .uk
+  // builds require a state, the global .com build has no country/state fields
+  // at all. The market is fixed at build time, so this branch is too — the
+  // column itself is nullable (005_market_geography.sql) and this is what
+  // actually enforces the requirement on the two geo markets.
+  location_id: getMarket().hasGeo
+    ? z.string().uuid('Select a state')
+    : z.string().uuid().nullable().optional(),
   headline: z.string().max(300).trim().optional().nullable(),
   subheadline: z.string().max(500).trim().optional().nullable(),
   overview: z.string().max(20000).optional().nullable(),

@@ -35,6 +35,22 @@ export const EMPTY_SEO_BLOG: SeoBlogFormValues = {
   category_id: '',
 }
 
+// blog_posts.slug is validated server-side against /^[a-z0-9-]+$/ (see
+// lib/schemas/seo-blog.ts) — no spaces, no slashes, no punctuation. The shared
+// generateSlug() deliberately preserves '/' because SEO pages nest their slug
+// under a state, so it can't be reused here.
+//
+// `live` keeps a trailing hyphen while the admin is still typing; the strict
+// pass runs on save.
+function blogSlug(text: string, live = false): string {
+  const s = text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s_-]/g, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/-{2,}/g, '-')
+  return live ? s.replace(/^-+/, '') : s.replace(/^-+|-+$/g, '')
+}
+
 interface BlogCategory { id: string; name: string }
 
 interface Props {
@@ -48,9 +64,15 @@ export function SeoBlogForm({ postId, initial, categories }: Props) {
   const { isSEOEditor } = useActingRole()
   const [v, setV] = useState<SeoBlogFormValues>(initial)
   const [saving, setSaving] = useState(false)
+  // An existing post's slug is its live URL — never re-derive it from the title.
+  const [slugTouched, setSlugTouched] = useState(Boolean(postId))
 
   const set = <K extends keyof SeoBlogFormValues>(key: K, value: SeoBlogFormValues[K]) =>
     setV(prev => ({ ...prev, [key]: value }))
+
+  function setTitle(title: string) {
+    setV(prev => ({ ...prev, title, ...(slugTouched ? {} : { slug: blogSlug(title, true) }) }))
+  }
 
   async function uploadImage(file: File, key: 'image_webp_url') {
     const t = toast.loading('Uploading…')
@@ -66,12 +88,16 @@ export function SeoBlogForm({ postId, initial, categories }: Props) {
   }
 
   async function save() {
-    if (!v.title || !v.slug) { toast.error('Title and slug are required'); return }
+    if (!v.title.trim()) { toast.error('Title is required'); return }
+    const slug = blogSlug(v.slug)
+    if (!slug) { toast.error('URL slug is required'); return }
+    if (slug !== v.slug) set('slug', slug)
+
     setSaving(true)
     const payload = {
       published_at: v.published_at ? new Date(v.published_at).toISOString() : null,
-      title: v.title,
-      slug: v.slug,
+      title: v.title.trim(),
+      slug,
       seo_title: v.seo_title || null,
       meta_keyword: v.meta_keyword || null,
       seo_description: v.seo_description || null,
@@ -92,8 +118,12 @@ export function SeoBlogForm({ postId, initial, categories }: Props) {
     })
     setSaving(false)
     if (!res.ok) {
-      const d = await res.json().catch(() => null) as { error?: string } | null
-      toast.error(d?.error ?? 'Save failed')
+      // A Zod rejection returns `error: 'Invalid data'` plus per-field details.
+      // Showing only `error` left the admin with a bare "Invalid data" toast
+      // and no idea which field the API objected to.
+      const d = await res.json().catch(() => null) as { error?: string; details?: Record<string, string[]> } | null
+      const [field, messages] = Object.entries(d?.details ?? {})[0] ?? []
+      toast.error(field ? `${field}: ${messages?.[0] ?? 'invalid'}` : d?.error ?? 'Save failed')
       return
     }
     toast.success('Saved')
@@ -113,10 +143,16 @@ export function SeoBlogForm({ postId, initial, categories }: Props) {
           options={[{ value: '', label: 'Uncategorised' }, ...categories.map(c => ({ value: c.id, label: c.name }))]}
         />
         <AdminInput label="Article Date" type="date" value={v.published_at} onChange={e => set('published_at', e.target.value)} />
-        <AdminInput label="Title" required value={v.title} onChange={e => set('title', e.target.value)} />
+        <AdminInput label="Title" required value={v.title} onChange={e => setTitle(e.target.value)} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <AdminInput label="URL" required value={`${siteUrl}/blog/`} disabled readOnly />
-          <AdminInput label="URL SLUG" required value={v.slug} onChange={e => set('slug', e.target.value.toLowerCase())} />
+          <AdminInput
+            label="URL SLUG"
+            required
+            hint="lowercase, hyphens only"
+            value={v.slug}
+            onChange={e => { setSlugTouched(true); set('slug', blogSlug(e.target.value, true)) }}
+          />
         </div>
         <AdminInput label="Meta Title" required value={v.seo_title} onChange={e => set('seo_title', e.target.value)} maxCount={100} />
         <AdminInput label="Meta Keyword" required value={v.meta_keyword} onChange={e => set('meta_keyword', e.target.value)} />
