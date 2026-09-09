@@ -82,9 +82,15 @@ export function AdminSelect({ label, required, hint, options, className = '', id
     maxHeight: number
   } | null>(null)
 
-  const selectedOption = useMemo(() => {
-    return options.find(o => String(o.value) === String(value)) || options[0]
-  }, [options, value])
+  // A value that matches no option must NOT render as if the first option were
+  // chosen. The SEO Page form's State select did exactly that: with
+  // location_id still '', the button showed the first state's name in bold, so
+  // the admin filled the whole form believing a state was picked and the save
+  // came back "Select a state".
+  const selectedOption = useMemo(
+    () => options.find(o => String(o.value) === String(value)),
+    [options, value]
+  )
 
   const filteredOptions = useMemo(() => {
     if (!search.trim()) return options
@@ -276,8 +282,8 @@ export function AdminSelect({ label, required, hint, options, className = '', id
           onClick={() => setOpen(o => !o)}
           className={`${INPUT_BASE} flex items-center justify-between text-left pr-9 cursor-pointer hover:border-[#4472C4] ${className}`}
         >
-          <span className={`truncate ${selectedOption?.value === '' ? 'text-zinc-400' : 'text-zinc-900 font-medium'}`}>
-            {selectedOption?.label ?? 'Select...'}
+          <span className={`truncate ${!selectedOption || selectedOption.value === '' ? 'text-zinc-400' : 'text-zinc-900 font-medium'}`}>
+            {selectedOption?.label ?? (options.length === 0 ? 'No options available' : 'Select…')}
           </span>
           <svg className={`w-4 h-4 text-zinc-400 absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-150 ${open ? 'rotate-180 text-[#4472C4]' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
