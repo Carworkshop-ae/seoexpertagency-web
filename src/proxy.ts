@@ -71,8 +71,11 @@ export async function proxy(req: NextRequest) {
   // which only hides the links — this is what enforces the restriction.
   if (staff && !isLoginPath) {
     if (staff.role === 'seo_editor') {
+      // Services/Industries have no admin pages anymore — editing happens
+      // inline on the homepage, which only needs the API routes below
+      // (already allowed), not an admin page.
       const allowedPages = [
-        '/admin/services', '/admin/industries', '/admin/projects', '/admin/locations',
+        '/admin/projects', '/admin/locations',
         '/admin/seo-blog', '/admin/static-page-seo', '/admin/pages/static', '/admin/search-content',
       ]
       const allowedApi = [
@@ -87,7 +90,7 @@ export async function proxy(req: NextRequest) {
         }
       } else if (pathname.startsWith('/admin')) {
         if (!allowedPages.some(p => pathname === p || pathname.startsWith(p + '/'))) {
-          return NextResponse.redirect(new URL('/admin/services?error=access_denied', req.url))
+          return NextResponse.redirect(new URL('/admin/projects?error=access_denied', req.url))
         }
       }
     }

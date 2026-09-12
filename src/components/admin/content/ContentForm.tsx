@@ -35,9 +35,10 @@ interface Props {
   /** Existing row id; omitted when creating. */
   id?: string
   basePath: string
-  /** Public URL prefix, e.g. `/industries`. Omit when this content type has no
-   *  standalone public page (e.g. services, which only render as cards on the
-   *  homepage) — the URL hint and slug-change warning are hidden instead. */
+  /** Public URL prefix, e.g. `/locations`. Omit when this content type has no
+   *  standalone public page (e.g. services and industries, which only render
+   *  as cards on the homepage) — the URL hint and slug-change warning are
+   *  hidden instead. */
   publicPrefix?: string
   singular: string
   /** Field holding the human name — used to auto-derive the slug on create. */

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/service'
-import { getIndustries, getProjects, getLocations } from '@/lib/data/content'
+import { getProjects, getLocations } from '@/lib/data/content'
 
 const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/^["']|["']$/g, '').trim()
 export const BASE_URL = rawSiteUrl && rawSiteUrl.startsWith('http') ? rawSiteUrl : 'https://seoexpertagency.com'
@@ -88,8 +88,8 @@ function escapeXml(unsafe: string): string {
 export async function getGeneralSitemapUrls(): Promise<SitemapUrl[]> {
   // Reads published CMS rows, falling back to the static catalogue when the
   // tables are empty — so the sitemap always matches what the site renders.
-  const [SEO_INDUSTRIES, SEO_PROJECTS, SEO_LOCATIONS] = await Promise.all([
-    getIndustries(), getProjects(), getLocations(),
+  const [SEO_PROJECTS, SEO_LOCATIONS] = await Promise.all([
+    getProjects(), getLocations(),
   ])
 
   const now = new Date().toISOString()
@@ -97,7 +97,6 @@ export async function getGeneralSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: BASE_URL, lastmod: now, changefreq: 'weekly', priority: 1.0 },
     { loc: `${BASE_URL}/about`, lastmod: now, changefreq: 'monthly', priority: 0.8 },
     { loc: `${BASE_URL}/pricing`, lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { loc: `${BASE_URL}/industries`, lastmod: now, changefreq: 'weekly', priority: 0.9 },
     { loc: `${BASE_URL}/projects`, lastmod: now, changefreq: 'weekly', priority: 0.9 },
     { loc: `${BASE_URL}/locations`, lastmod: now, changefreq: 'weekly', priority: 0.8 },
     { loc: `${BASE_URL}/faq`, lastmod: now, changefreq: 'monthly', priority: 0.6 },
@@ -105,16 +104,6 @@ export async function getGeneralSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/privacy`, lastmod: now, changefreq: 'yearly', priority: 0.3 },
     { loc: `${BASE_URL}/terms`, lastmod: now, changefreq: 'yearly', priority: 0.3 },
   ]
-
-  // Add all industries
-  for (const i of SEO_INDUSTRIES) {
-    urls.push({
-      loc: `${BASE_URL}/industries/${i.slug}`,
-      lastmod: now,
-      changefreq: 'weekly',
-      priority: 0.8,
-    })
-  }
 
   // Add all projects
   for (const p of SEO_PROJECTS) {

@@ -27,9 +27,10 @@ interface Props {
   rows: ContentRow[]
   /** Admin module segment, e.g. `services`. */
   basePath: string
-  /** Public URL prefix for the "view" link, e.g. `/industries`. Omit when this
-   *  content type has no standalone public page (e.g. services, which only
-   *  render as cards on the homepage) — the "view" link is hidden instead. */
+  /** Public URL prefix for the "view" link, e.g. `/locations`. Omit when this
+   *  content type has no standalone public page (e.g. services and
+   *  industries, which only render as cards on the homepage) — the "view"
+   *  link is hidden instead. */
   publicPrefix?: string
   singular: string
   plural: string
