@@ -25,12 +25,13 @@ import type { SeoJson } from '@/lib/schemas/seo'
 // A freeform "general" SEO landing page. Its slug isn't nested under any fixed
 // prefix, so this catch-all only ever fires for a first segment that doesn't
 // match one of (default-footer)'s static routes (about, blog, contact, faq,
-// locations, lp, pricing, privacy, projects, terms, (home)) — Next.js always
-// matches a static segment before a dynamic one, so a page slug colliding
-// with one of those names would simply be unreachable; that's a data-entry
-// concern for whoever picks the slug, not a routing bug. (services and
-// industries no longer have standalone pages — they only render as cards on
-// the homepage — so those names are free to use as SEO page slugs now.)
+// lp, pricing, privacy, projects, terms, (home)) — Next.js always matches a
+// static segment before a dynamic one, so a page slug colliding with one of
+// those names would simply be unreachable; that's a data-entry concern for
+// whoever picks the slug, not a routing bug. (services, industries and
+// locations no longer have standalone public pages — services/industries
+// only render as cards on the homepage, and locations has no public page at
+// all — so those names are free to use as SEO page slugs now.)
 
 interface PageProps {
   params: Promise<{ slug: string[] }>
@@ -93,16 +94,16 @@ export default async function SeoPage({ params }: PageProps) {
     .limit(3)
 
   const stateName = page.state?.name
-  const stateSlug = page.state?.slug
 
   const schema = generateServicePageSchema({
     service: page.headline ?? undefined,
     location: stateName ?? undefined,
     url: pageUrl,
     faqs,
+    // No public page exists for a location anymore, so the breadcrumb trail
+    // just goes Home → this page rather than through a dead intermediate URL.
     breadcrumbs: [
       { name: 'Home', url: '/' },
-      ...(stateName && stateSlug ? [{ name: stateName, url: `/locations/${stateSlug}` }] : []),
       { name: page.headline ?? page.slug, url: `/${page.slug}` },
     ],
   })

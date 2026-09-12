@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Sparkles, Mail, Phone, MapPin, ArrowRight } from 'lucide-react'
 import type { SiteSettings } from '@/types/settings'
-import { getLocations } from '@/lib/data/content'
 
 interface FooterProps {
   settings: SiteSettings
@@ -10,10 +9,6 @@ interface FooterProps {
 }
 
 export async function Footer({ settings }: FooterProps) {
-  // Footer link columns mirror the published CMS content, so adding a location
-  // in admin adds it here without a code change.
-  const locations = await getLocations()
-
   const bgColor = settings.footer_background_color || '#0A1128'
   const textColor = settings.footer_text_color || '#FFFFFF'
 
@@ -62,8 +57,8 @@ export async function Footer({ settings }: FooterProps) {
           </div>
         </div>
 
-        {/* 3-Column Navigation Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-10 text-xs">
+        {/* 2-Column Navigation Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 text-xs">
           {/* Col 1: Company */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
@@ -80,25 +75,8 @@ export async function Footer({ settings }: FooterProps) {
             </ul>
           </div>
 
-          {/* Col 2: Regional Locations */}
+          {/* Col 2: Contact Info */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
-              Locations
-            </h4>
-            <ul className="space-y-2.5 text-slate-400">
-              {locations.map(location => (
-                <li key={location.slug}>
-                  <Link href={`/locations/${location.slug}`} className="hover:text-white hover:underline transition-colors">
-                    {location.name}
-                  </Link>
-                </li>
-              ))}
-              <li><Link href="/locations" className="hover:text-white hover:underline transition-colors font-semibold text-primary">View All Locations →</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 3: Contact Info */}
-          <div className="col-span-2 md:col-span-1">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
               Contact &amp; HQ
             </h4>

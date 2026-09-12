@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/service'
-import { getProjects, getLocations } from '@/lib/data/content'
+import { getProjects } from '@/lib/data/content'
 
 const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/^["']|["']$/g, '').trim()
 export const BASE_URL = rawSiteUrl && rawSiteUrl.startsWith('http') ? rawSiteUrl : 'https://seoexpertagency.com'
@@ -88,9 +88,7 @@ function escapeXml(unsafe: string): string {
 export async function getGeneralSitemapUrls(): Promise<SitemapUrl[]> {
   // Reads published CMS rows, falling back to the static catalogue when the
   // tables are empty — so the sitemap always matches what the site renders.
-  const [SEO_PROJECTS, SEO_LOCATIONS] = await Promise.all([
-    getProjects(), getLocations(),
-  ])
+  const SEO_PROJECTS = await getProjects()
 
   const now = new Date().toISOString()
   const urls: SitemapUrl[] = [
@@ -98,7 +96,6 @@ export async function getGeneralSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/about`, lastmod: now, changefreq: 'monthly', priority: 0.8 },
     { loc: `${BASE_URL}/pricing`, lastmod: now, changefreq: 'weekly', priority: 0.9 },
     { loc: `${BASE_URL}/projects`, lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { loc: `${BASE_URL}/locations`, lastmod: now, changefreq: 'weekly', priority: 0.8 },
     { loc: `${BASE_URL}/faq`, lastmod: now, changefreq: 'monthly', priority: 0.6 },
     { loc: `${BASE_URL}/contact`, lastmod: now, changefreq: 'monthly', priority: 0.8 },
     { loc: `${BASE_URL}/privacy`, lastmod: now, changefreq: 'yearly', priority: 0.3 },
@@ -111,16 +108,6 @@ export async function getGeneralSitemapUrls(): Promise<SitemapUrl[]> {
       loc: `${BASE_URL}/projects/${p.slug}`,
       lastmod: now,
       changefreq: 'monthly',
-      priority: 0.8,
-    })
-  }
-
-  // Add all locations
-  for (const l of SEO_LOCATIONS) {
-    urls.push({
-      loc: `${BASE_URL}/locations/${l.slug}`,
-      lastmod: now,
-      changefreq: 'weekly',
       priority: 0.8,
     })
   }

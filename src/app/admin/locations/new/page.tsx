@@ -17,7 +17,6 @@ export default function NewLocationPage() {
       <div className="p-6">
         <ContentForm
           basePath="locations"
-          publicPrefix="/locations"
           singular="Location"
           titleField="name"
           sections={locationSections}

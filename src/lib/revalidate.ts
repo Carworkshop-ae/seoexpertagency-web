@@ -27,12 +27,14 @@ const STATIC_PATHS: Record<string, string[]> = {
 // Detail path + the listing that indexes it, per content type. The homepage is
 // added on top for projects because it surfaces there. Services and
 // industries have no standalone public pages — they only render as cards on
-// the homepage.
+// the homepage. Locations has no public page at all anymore (admin CRUD
+// stays only to feed the SEO Page geo-targeting picker) — nothing public to
+// revalidate.
 const CONTENT_PATHS: Record<'service' | 'industry' | 'project' | 'location', (slug?: string) => string[]> = {
   service:  () => ['/'],
   industry: () => ['/'],
   project:  slug => [`/projects/${slug}`, '/projects', '/'],
-  location: slug => [`/locations/${slug}`, '/locations'],
+  location: () => [],
 }
 
 // The Supabase table each type reads from, matching the `supabase:<table>` tag
