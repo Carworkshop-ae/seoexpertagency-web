@@ -25,7 +25,6 @@ export default async function EditLocationPage({ params }: { params: Promise<{ i
         <ContentForm
           id={id}
           basePath="locations"
-          publicPrefix="/locations"
           singular="Location"
           titleField="name"
           sections={locationSections}

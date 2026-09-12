@@ -28,7 +28,7 @@ interface ListingPageEditorProps {
   defaults: ListingDefaults
 }
 
-// Shared editor for collection-page heroes (services/brands/locations/blog lists).
+// Shared editor for collection-page heroes (brands/blog lists).
 // Only three editable areas: H1, subtitle, and the CTA banner.
 export function ListingPageEditor({ slug, title, viewHref, defaults }: ListingPageEditorProps) {
   const merge = (s: Partial<ListingContent> | null): ListingContent => ({
