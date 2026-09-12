@@ -175,20 +175,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     {
       id: '1',
       label: 'Services',
-      link: '/services',
-      has_dropdown: true,
+      link: '/#services',
+      has_dropdown: false,
       visible: true,
       order: 1,
-      children: [
-        { label: 'Technical SEO', link: '/services/technical-seo' },
-        { label: 'Local SEO', link: '/services/local-seo' },
-        { label: 'E-Commerce SEO', link: '/services/ecommerce-seo' },
-        { label: 'Enterprise SEO', link: '/services/enterprise-seo' },
-        { label: 'SEO Strategy', link: '/services/seo-strategy' },
-        { label: 'On-Page SEO', link: '/services/on-page-seo' },
-        { label: 'Off-Page SEO & Links', link: '/services/off-page-seo' },
-        { label: 'Content SEO', link: '/services/content-seo' },
-      ],
     },
     {
       id: '2',

@@ -1,9 +1,16 @@
 import { cache } from 'react'
 import { createPublicSupabase } from '@/lib/supabase/public'
 import {
-  SEO_SERVICES, SEO_INDUSTRIES, SEO_PROJECTS, SEO_LOCATIONS,
-  type SEOServiceData, type SEOIndustryData, type SEOProjectData, type SEOLocationData,
+  SEO_SERVICES, SEO_INDUSTRIES, SEO_PROJECTS, SEO_LOCATIONS, SEO_PACKAGES,
+  type SEOServiceData, type SEOIndustryData, type SEOProjectData, type SEOLocationData, type SEOPackageData,
 } from '@/lib/data/agency-data'
+import {
+  mergeHomeContent, type HomeContent,
+  mergeAboutContent, type AboutContent,
+  mergeContactContent, type ContactContent,
+  mergePolicyContent, type PolicyContent, PRIVACY_DEFAULTS, TERMS_DEFAULTS,
+  mergeFaqPageContent, type FaqPageContent,
+} from '@/lib/data/static-pages-schema'
 
 // Public content loaders: read the CMS, fall back to the typed constants in
 // agency-data.ts when a table is empty.
@@ -22,7 +29,7 @@ const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : [])
 
 /** Rows the CMS has published, or [] if the table is empty or unreachable. */
-async function published(table: 'services' | 'industries' | 'projects' | 'locations'): Promise<Row[]> {
+async function published(table: 'services' | 'industries' | 'projects' | 'locations' | 'packages'): Promise<Row[]> {
   try {
     const supabase = createPublicSupabase()
     const { data } = await supabase
@@ -156,6 +163,68 @@ export const getLocations = cache(async (): Promise<SEOLocationData[]> => {
     }
   })
 })
+
+// Tiers are fixed (basic/silver/gold) rather than free-form like the entity
+// tables above — matched by `tier`, not positionally, so a missing row still
+// falls back to that specific tier's hardcoded default rather than shifting
+// the others out of order.
+export const getPackages = cache(async (): Promise<SEOPackageData[]> => {
+  const rows = await published('packages')
+  if (rows.length === 0) return SEO_PACKAGES
+
+  return SEO_PACKAGES.map(fb => {
+    const r = rows.find(row => row.tier === fb.tier)
+    if (!r) return fb
+    return {
+      id: str(r.id) || fb.id,
+      name: str(r.name) || fb.name,
+      tier: fb.tier,
+      price: str(r.price) || fb.price,
+      billingPeriod: str(r.billing_period) || fb.billingPeriod,
+      description: str(r.description) || fb.description,
+      isPopular: typeof r.is_popular === 'boolean' ? r.is_popular : fb.isPopular,
+      ctaLabel: str(r.cta_label) || fb.ctaLabel,
+      features: arr<string>(r.features_json).length ? arr(r.features_json) : fb.features,
+    }
+  })
+})
+
+// Shared by every static-page loader below: read the published content_json
+// for a static_pages slug, or null if there's no row (fresh clone, CI) or the
+// DB is unreachable — callers merge that onto their own typed defaults, same
+// fallback philosophy as the entity loaders above.
+async function publishedStaticPageContent<T>(slug: string): Promise<Partial<T> | null> {
+  try {
+    const supabase = createPublicSupabase()
+    const { data } = await supabase
+      .from('static_pages')
+      .select('content_json')
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .maybeSingle()
+    return (data?.content_json as Partial<T> | null) ?? null
+  } catch {
+    return null
+  }
+}
+
+export const getHomeContent = cache(async (): Promise<HomeContent> =>
+  mergeHomeContent(await publishedStaticPageContent<HomeContent>('home')))
+
+export const getAboutContent = cache(async (): Promise<AboutContent> =>
+  mergeAboutContent(await publishedStaticPageContent<AboutContent>('about')))
+
+export const getContactContent = cache(async (): Promise<ContactContent> =>
+  mergeContactContent(await publishedStaticPageContent<ContactContent>('contact')))
+
+export const getFaqPageContent = cache(async (): Promise<FaqPageContent> =>
+  mergeFaqPageContent(await publishedStaticPageContent<FaqPageContent>('faq')))
+
+export const getPrivacyContent = cache(async (): Promise<PolicyContent> =>
+  mergePolicyContent(PRIVACY_DEFAULTS, await publishedStaticPageContent<PolicyContent>('privacy')))
+
+export const getTermsContent = cache(async (): Promise<PolicyContent> =>
+  mergePolicyContent(TERMS_DEFAULTS, await publishedStaticPageContent<PolicyContent>('terms')))
 
 export const getService = cache(async (slug: string) => (await getServices()).find(s => s.slug === slug))
 export const getIndustry = cache(async (slug: string) => (await getIndustries()).find(i => i.slug === slug))

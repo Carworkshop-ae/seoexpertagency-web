@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react'
 import { ShieldCheck, TrendingUp, Award, BarChart3 } from 'lucide-react'
 
 interface TrustItem {
-  icon?: React.ReactNode
-  value: string
-  label: string
-  sublabel?: string
+  icon?: ReactNode
+  value: ReactNode
+  label: ReactNode
+  sublabel?: ReactNode
 }
 
 const DEFAULT_SEO_TRUST_ITEMS: TrustItem[] = [

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Sparkles, Mail, Phone, MapPin, ArrowRight } from 'lucide-react'
 import type { SiteSettings } from '@/types/settings'
-import { getServices, getIndustries, getLocations } from '@/lib/data/content'
+import { getIndustries, getLocations } from '@/lib/data/content'
 
 interface FooterProps {
   settings: SiteSettings
@@ -10,10 +10,10 @@ interface FooterProps {
 }
 
 export async function Footer({ settings }: FooterProps) {
-  // Footer link columns mirror the published CMS content, so adding a service
+  // Footer link columns mirror the published CMS content, so adding an industry/location
   // in admin adds it here without a code change.
-  const [services, industries, locations] = await Promise.all([
-    getServices(), getIndustries(), getLocations(),
+  const [industries, locations] = await Promise.all([
+    getIndustries(), getLocations(),
   ])
 
   const bgColor = settings.footer_background_color || '#0A1128'
@@ -64,8 +64,8 @@ export async function Footer({ settings }: FooterProps) {
           </div>
         </div>
 
-        {/* 5-Column Navigation Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-10 text-xs">
+        {/* 4-Column Navigation Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-10 text-xs">
           {/* Col 1: Company */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
@@ -82,23 +82,7 @@ export async function Footer({ settings }: FooterProps) {
             </ul>
           </div>
 
-          {/* Col 2: Core Services */}
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
-              SEO Services
-            </h4>
-            <ul className="space-y-2.5 text-slate-400">
-              {services.map(service => (
-                <li key={service.slug}>
-                  <Link href={`/services/${service.slug}`} className="hover:text-white hover:underline transition-colors">
-                    {service.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 3: Industries We Serve */}
+          {/* Col 2: Industries We Serve */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
               Industries
@@ -114,7 +98,7 @@ export async function Footer({ settings }: FooterProps) {
             </ul>
           </div>
 
-          {/* Col 4: Regional Locations */}
+          {/* Col 3: Regional Locations */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
               Locations
@@ -131,7 +115,7 @@ export async function Footer({ settings }: FooterProps) {
             </ul>
           </div>
 
-          {/* Col 5: Contact Info */}
+          {/* Col 4: Contact Info */}
           <div className="col-span-2 md:col-span-1">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
               Contact &amp; HQ

@@ -7,6 +7,7 @@ export type RevalidateType =
   | 'industry'
   | 'project'
   | 'location'
+  | 'package'
   | 'seo_page'
   | 'static'
   | 'all'
@@ -24,9 +25,10 @@ const STATIC_PATHS: Record<string, string[]> = {
 }
 
 // Detail path + the listing that indexes it, per content type. The homepage is
-// added on top for services and projects because both surface there.
+// added on top for projects because it surfaces there. Services have no
+// standalone public pages — they only render as cards on the homepage.
 const CONTENT_PATHS: Record<'service' | 'industry' | 'project' | 'location', (slug?: string) => string[]> = {
-  service:  slug => [`/services/${slug}`, '/services', '/'],
+  service:  () => ['/'],
   industry: slug => [`/industries/${slug}`, '/industries'],
   project:  slug => [`/projects/${slug}`, '/projects', '/'],
   location: slug => [`/locations/${slug}`, '/locations'],
@@ -39,9 +41,9 @@ const CONTENT_PATHS: Record<'service' | 'industry' | 'project' | 'location', (sl
 // `export const revalidate = N` caches that fetch for N seconds regardless of
 // the page-level purge. Without also busting the tag, a publish/edit/delete
 // can appear to do nothing for up to an hour.
-const TABLE_FOR_TYPE: Record<'service' | 'industry' | 'project' | 'location' | 'blog' | 'seo_page', string> = {
+const TABLE_FOR_TYPE: Record<'service' | 'industry' | 'project' | 'location' | 'package' | 'blog' | 'seo_page', string> = {
   service: 'services', industry: 'industries', project: 'projects',
-  location: 'locations', blog: 'blog_posts', seo_page: 'seo_pages',
+  location: 'locations', package: 'packages', blog: 'blog_posts', seo_page: 'seo_pages',
 }
 
 // Single source of truth for which public paths an entity change must refresh.
@@ -54,6 +56,8 @@ export function pathsForRevalidate(type: RevalidateType, slug?: string): string[
     case 'project':
     case 'location':
       return slug ? CONTENT_PATHS[type](slug) : []
+    // Packages only ever render on the homepage — no slug/detail path to key on.
+    case 'package': return ['/']
     // The slug already IS the full public path (`{location}/{service}`), not
     // nested under a fixed prefix like the four types above.
     case 'seo_page': return slug ? [`/${slug}`] : []

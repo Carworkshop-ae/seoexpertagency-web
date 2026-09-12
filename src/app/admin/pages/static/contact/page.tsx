@@ -19,7 +19,7 @@ interface ContactContent {
 }
 
 const merge = (s: Partial<ContactContent> | null): ContactContent => ({
-  hero: { h1: 'Contact SEO Expert Agency', subheadline: "Get in touch — we're here to help", ...s?.hero },
+  hero: { h1: 'Get in Touch With Our SEO Strategists', subheadline: 'Request a comprehensive technical audit, discuss custom retainers, or explore strategic partnerships.', ...s?.hero },
   details: { visible: true, phone: '', whatsapp: '', email: 'info@seoexpertagency.com', address: '', weekday_hours: 'Monday – Friday: 9am – 6pm', weekend_hours: 'Saturday – Sunday: Closed', ...s?.details },
   maps: { visible: true, embed_url: '', height: '400px', ...s?.maps },
   form: { visible: true, heading: 'Send Us a Message', success_message: "Thank you! We'll contact you within 24 hours.", show_service: true, ...s?.form },

@@ -13,72 +13,15 @@ import { EditorChrome, StatusCard, SeoCard, InfoCard } from '@/components/admin/
 import { EntitySeoTab } from '@/components/admin/EntitySeoTab'
 import { EditorSkeleton } from '@/components/admin/ui/EditorSkeleton'
 import type { SeoJson } from '@/lib/schemas/seo'
+import { HOME_DEFAULTS, mergeHomeContent, type HomeContent, type HomeStat, type HomeUSP, type HomeReview } from '@/lib/data/static-pages-schema'
 
 type Status = 'draft' | 'published' | 'archived'
-interface FAQ { q: string; a: string }
-interface Stat { icon: string; value: string; label: string }
-interface Step { icon: string; title: string; description: string }
-interface USP { icon: string; text: string }
-interface Review { name: string; rating: number; service: string; text: string }
+type Stat = HomeStat
+type USP = HomeUSP
+type Review = HomeReview
 
-interface HomeContent {
-  hero: { h1: string; subheadline: string; cta_primary_text: string; cta_primary_link: string; cta_secondary_text: string; cta_secondary_link: string; image_url: string | null }
-  trust_bar: { visible: boolean; stats: Stat[] }
-  services: { visible: boolean; heading: string }
-  how_it_works: { visible: boolean; heading: string; steps: Step[] }
-  why_choose_us: { visible: boolean; heading: string; items: USP[] }
-  reviews: { visible: boolean; heading: string; reviews: Review[] }
-  blog_preview: { visible: boolean; heading: string; count: number }
-  locations: { visible: boolean; heading: string }
-  faq: { visible: boolean; heading: string; faqs: FAQ[] }
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string; bg_color: string }
-}
-
-// Fallback copy shown when static_pages.content_json is empty. Kept qualitative
-// on purpose — these become live text the moment an editor hits save, so no
-// unverified performance or volume claim belongs here.
-const DEFAULTS: HomeContent = {
-  hero: { h1: 'Grow Your Business With Data-Driven SEO', subheadline: 'Technical audits, content strategy and authority building for ambitious brands.', cta_primary_text: 'Get a Free SEO Consultation', cta_primary_link: '/contact', cta_secondary_text: 'Explore Our Services', cta_secondary_link: '/services', image_url: null },
-  trust_bar: { visible: true, stats: [
-    { icon: '🛡️', value: '100% White-Hat', label: 'SEO Methodology' },
-    { icon: '👥', value: 'Senior', label: 'In-House Team' },
-    { icon: '📊', value: 'Monthly', label: 'Transparent Reporting' },
-    { icon: '🤝', value: 'No Lock-In', label: 'Rolling Contracts' },
-  ] },
-  services: { visible: true, heading: 'Our Core SEO Services' },
-  how_it_works: { visible: true, heading: 'How We Work', steps: [
-    { icon: '🔍', title: 'Audit & Discovery', description: 'Full technical crawl, keyword gap and competitor analysis.' },
-    { icon: '🗺️', title: 'Strategy & Roadmap', description: 'A prioritised plan mapped to commercial search intent.' },
-    { icon: '🔧', title: 'Execution', description: 'Technical fixes, content production and authority building.' },
-    { icon: '📈', title: 'Measure & Iterate', description: 'Monthly reporting against agreed KPIs, and refinement.' },
-  ] },
-  why_choose_us: { visible: true, heading: 'Why Choose SEO Expert Agency?', items: [
-    { icon: '✅', text: 'Senior in-house strategists — no offshore hand-off' },
-    { icon: '✅', text: 'White-hat methodology, penalty-safe by design' },
-    { icon: '✅', text: 'Transparent monthly reporting against agreed KPIs' },
-  ] },
-  reviews: { visible: true, heading: 'What Our Clients Say', reviews: [] },
-  blog_preview: { visible: true, heading: 'Latest from Our Blog', count: 3 },
-  locations: { visible: true, heading: 'Where We Work' },
-  faq: { visible: true, heading: 'Common Questions', faqs: [] },
-  cta_banner: { visible: true, headline: 'Ready to Grow Your Search Visibility?', subheadline: 'Book a free consultation with our senior SEO team.', button_text: 'Get Your Free SEO Consultation', button_link: '/contact', bg_color: '#0066FF' },
-}
-
-function merge(saved: Partial<HomeContent> | null): HomeContent {
-  const c = saved ?? {}
-  return {
-    hero: { ...DEFAULTS.hero, ...c.hero },
-    trust_bar: { ...DEFAULTS.trust_bar, ...c.trust_bar },
-    services: { ...DEFAULTS.services, ...c.services },
-    how_it_works: { ...DEFAULTS.how_it_works, ...c.how_it_works },
-    why_choose_us: { ...DEFAULTS.why_choose_us, ...c.why_choose_us },
-    reviews: { ...DEFAULTS.reviews, ...c.reviews },
-    blog_preview: { ...DEFAULTS.blog_preview, ...c.blog_preview },
-    locations: { ...DEFAULTS.locations, ...c.locations },
-    faq: { ...DEFAULTS.faq, ...c.faq },
-    cta_banner: { ...DEFAULTS.cta_banner, ...c.cta_banner },
-  }
-}
+const DEFAULTS = HOME_DEFAULTS
+const merge = mergeHomeContent
 
 export default function HomeEditor() {
   const [loading, setLoading] = useState(true)
@@ -179,12 +122,13 @@ export default function HomeEditor() {
         <AdminSectionCard title="Trust Bar" visible={c.trust_bar.visible} onVisibleChange={v => patch('trust_bar', { visible: v })}>
           <Repeater<Stat>
             items={c.trust_bar.stats} max={4} addLabel="+ Add stat" onChange={stats => patch('trust_bar', { stats })}
-            blank={{ icon: '⭐', value: '', label: '' }}
+            blank={{ icon: '⭐', value: '', label: '', sublabel: '' }}
             render={(it, upd) => (
-              <div className="grid grid-cols-[3rem_1fr_1fr] gap-2 flex-1">
+              <div className="grid grid-cols-[3rem_1fr_1fr_1fr] gap-2 flex-1">
                 <input value={it.icon} onChange={e => upd({ icon: e.target.value })} className={inputCls} placeholder="⭐" />
                 <input value={it.value} onChange={e => upd({ value: e.target.value })} className={inputCls} placeholder="4.9/5" />
                 <input value={it.label} onChange={e => upd({ label: e.target.value })} className={inputCls} placeholder="Average Rating" />
+                <input value={it.sublabel ?? ''} onChange={e => upd({ sublabel: e.target.value })} className={inputCls} placeholder="Optional sublabel" />
               </div>
             )}
           />
@@ -215,11 +159,14 @@ export default function HomeEditor() {
           <AdminInput label="Section Heading" value={c.why_choose_us.heading} onChange={e => patch('why_choose_us', { heading: e.target.value })} />
           <Repeater<USP>
             items={c.why_choose_us.items} max={6} addLabel="+ Add USP" onChange={items => patch('why_choose_us', { items })}
-            blank={{ icon: '✅', text: '' }}
+            blank={{ icon: '✅', title: '', description: '' }}
             render={(it, upd) => (
               <div className="grid grid-cols-[3rem_1fr] gap-2 flex-1">
                 <input value={it.icon} onChange={e => upd({ icon: e.target.value })} className={inputCls} />
-                <input value={it.text} onChange={e => upd({ text: e.target.value })} className={inputCls} placeholder="Benefit text" />
+                <div className="space-y-2">
+                  <input value={it.title} onChange={e => upd({ title: e.target.value })} className={inputCls} placeholder="Reason title" />
+                  <input value={it.description} onChange={e => upd({ description: e.target.value })} className={inputCls} placeholder="Reason description" />
+                </div>
               </div>
             )}
           />

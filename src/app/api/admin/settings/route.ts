@@ -14,7 +14,7 @@ function maskSecret(value: unknown): string {
   return s.length <= 4 ? '••••' : `${s.slice(0, 3)}••••${s.slice(-4)}`
 }
 
-const SETTINGS_PATHS = ['/', '/about', '/contact', '/services', '/brands', '/locations', '/blog', '/faq']
+const SETTINGS_PATHS = ['/', '/about', '/contact', '/brands', '/locations', '/blog', '/faq']
 
 function revalidateSettings() {
   for (const p of SETTINGS_PATHS) {

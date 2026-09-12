@@ -27,8 +27,10 @@ interface Props {
   rows: ContentRow[]
   /** Admin module segment, e.g. `services`. */
   basePath: string
-  /** Public URL prefix for the "view" link, e.g. `/services`. */
-  publicPrefix: string
+  /** Public URL prefix for the "view" link, e.g. `/industries`. Omit when this
+   *  content type has no standalone public page (e.g. services, which only
+   *  render as cards on the homepage) — the "view" link is hidden instead. */
+  publicPrefix?: string
   singular: string
   plural: string
   /** Whether the acting user may delete — deletion removes a live URL. */
@@ -143,7 +145,7 @@ export function ContentTable({ rows, basePath, publicPrefix, singular, plural, c
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        {row.status === 'published' && (
+                        {row.status === 'published' && publicPrefix && (
                           <a
                             href={`${publicPrefix}/${row.slug}`}
                             target="_blank"
@@ -190,9 +192,11 @@ export function ContentTable({ rows, basePath, publicPrefix, singular, plural, c
         loading={deleting}
         title={`Delete this ${singular.toLowerCase()}?`}
         message={
-          pendingDelete?.status === 'published'
+          pendingDelete?.status === 'published' && publicPrefix
             ? `"${pendingDelete.name ?? pendingDelete.title}" is live at ${publicPrefix}/${pendingDelete.slug}. Deleting it removes that page and anyone linking to it will get a 404. This cannot be undone.`
-            : `"${pendingDelete?.name ?? pendingDelete?.title}" will be permanently deleted. This cannot be undone.`
+            : pendingDelete?.status === 'published'
+              ? `"${pendingDelete.name ?? pendingDelete.title}" is currently published and visible on the site. Deleting it cannot be undone.`
+              : `"${pendingDelete?.name ?? pendingDelete?.title}" will be permanently deleted. This cannot be undone.`
         }
       />
     </div>

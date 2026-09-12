@@ -4,6 +4,7 @@ import { WhatsAppButton } from '@/components/layout/WhatsAppButton'
 import { CallButton } from '@/components/layout/CallButton'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { CookieBanner } from '@/components/layout/CookieBanner'
+import { AdminEditProvider } from '@/components/inline-edit/AdminEditProvider'
 import { getSettings } from '@/lib/hooks/useSettings'
 
 // Footer is intentionally NOT rendered here — it varies by route (default
@@ -18,7 +19,7 @@ export default async function PublicLayout({ children }: { children: React.React
   const gscContent = settings.gsc_meta?.match(/content=["']([^"']+)["']/)?.[1] ?? (settings.gsc_meta?.includes('<') ? '' : settings.gsc_meta?.trim())
 
   return (
-    <>
+    <AdminEditProvider>
       {/* Reveal-on-scroll safety: if JS is disabled, show all content immediately. */}
       <noscript>
         <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
@@ -41,6 +42,6 @@ export default async function PublicLayout({ children }: { children: React.React
       <WhatsAppButton settings={settings} />
       <CallButton settings={settings} />
       <CookieBanner />
-    </>
+    </AdminEditProvider>
   )
 }
