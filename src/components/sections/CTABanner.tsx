@@ -1,9 +1,10 @@
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 import { ArrowRight, Phone, Sparkles } from 'lucide-react'
 
 interface CTABannerProps {
-  title?: string
-  subtitle?: string
+  title?: ReactNode
+  subtitle?: ReactNode
   ctaLabel?: string
   ctaHref?: string
   secondaryLabel?: string

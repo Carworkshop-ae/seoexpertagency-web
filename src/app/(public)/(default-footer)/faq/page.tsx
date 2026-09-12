@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { PageHeader } from '@/components/sections/PageHeader'
 import { Accordion } from '@/components/ui/Accordion'
 import { CTABanner } from '@/components/sections/CTABanner'
+import { StaticPageEditProvider } from '@/components/inline-edit/StaticPageEditProvider'
+import { EditableText } from '@/components/inline-edit/EditableText'
+import { getFaqPageContent } from '@/lib/data/content'
 import { HOMEPAGE_FAQS } from '@/lib/data/agency-data'
 
 const DEFAULT_TITLE = 'SEO Frequently Asked Questions | SEO Expert Agency'
@@ -31,7 +34,9 @@ const EXTENDED_FAQS = [
   },
 ]
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const content = await getFaqPageContent()
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -46,7 +51,7 @@ export default function FAQPage() {
   }
 
   return (
-    <>
+    <StaticPageEditProvider slug="faq" initialContent={content}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
@@ -54,8 +59,8 @@ export default function FAQPage() {
       <PageHeader
         breadcrumb={[{ label: 'Home', href: '/' }, { label: 'FAQs' }]}
         eyebrow="CLEAR, TRANSPARENT ANSWERS"
-        title="Frequently Asked SEO Questions"
-        subtitle="Everything you need to know about our data-driven search marketing methodology, deliverables, and retainers."
+        title={<EditableText path="hero.h1" value={content.hero.h1} as="span" />}
+        subtitle={<EditableText path="hero.subheadline" value={content.hero.subheadline} as="span" multiline />}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
@@ -63,11 +68,11 @@ export default function FAQPage() {
       </div>
 
       <CTABanner
-        title="Have a Question Not Listed Here?"
-        subtitle="Schedule a 15-minute consultation with our senior SEO architects to discuss your specific website needs."
-        ctaLabel="Ask Our SEO Team"
-        ctaHref="/contact"
+        title={<EditableText path="cta_banner.headline" value={content.cta_banner.headline} as="span" />}
+        subtitle={<EditableText path="cta_banner.subheadline" value={content.cta_banner.subheadline} as="span" multiline />}
+        ctaLabel={content.cta_banner.button_text}
+        ctaHref={content.cta_banner.button_link}
       />
-    </>
+    </StaticPageEditProvider>
   )
 }

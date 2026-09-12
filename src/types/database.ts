@@ -726,6 +726,58 @@ export type Database = {
         }
         Relationships: []
       }
+      // Manually added ahead of `supabase gen types` — see
+      // supabase/migrations/006_packages.sql. Regenerating types once that
+      // migration is applied should produce an equivalent block; this one
+      // exists so the app builds and type-checks against it in the meantime.
+      packages: {
+        Row: {
+          billing_period: string
+          cta_label: string | null
+          description: string | null
+          features_json: Json
+          id: string
+          is_popular: boolean
+          name: string
+          price: string
+          sort_order: number
+          status: Database["public"]["Enums"]["content_status"]
+          tier: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          billing_period?: string
+          cta_label?: string | null
+          description?: string | null
+          features_json?: Json
+          id?: string
+          is_popular?: boolean
+          name: string
+          price: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          tier: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          billing_period?: string
+          cta_label?: string | null
+          description?: string | null
+          features_json?: Json
+          id?: string
+          is_popular?: boolean
+          name?: string
+          price?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          tier?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       seo_pages: {
         Row: {
           created_at: string

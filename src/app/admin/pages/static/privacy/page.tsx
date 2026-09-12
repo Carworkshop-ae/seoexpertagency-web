@@ -33,7 +33,7 @@ export default function PrivacyTermsEditor() {
       <div className="mt-5">
         {/* Both mounted but hidden to preserve unsaved edits when switching tabs */}
         <div className={tab === 'privacy' ? '' : 'hidden'}><PolicyTab slug="privacy" title="Privacy Policy" viewHref="/privacy" /></div>
-        <div className={tab === 'terms' ? '' : 'hidden'}><PolicyTab slug="terms" title="Terms & Conditions" viewHref="/terms" /></div>
+        <div className={tab === 'terms' ? '' : 'hidden'}><PolicyTab slug="terms" title="Terms of Service" viewHref="/terms" /></div>
       </div>
     </div>
   )

@@ -15,13 +15,15 @@ import { BlogPreview } from '@/components/sections/BlogPreview'
 import { FAQSection } from '@/components/sections/FAQSection'
 import { FinalCTASection } from '@/components/sections/FinalCTASection'
 import { Reveal } from '@/components/ui/Reveal'
+import { StaticPageEditProvider } from '@/components/inline-edit/StaticPageEditProvider'
+import { EditableText } from '@/components/inline-edit/EditableText'
 import { generateOrganizationSchema, organizationDetailsFromSettings } from '@/lib/page-engine/schema'
 import { getSettings } from '@/lib/hooks/useSettings'
 import { resolveSEO, seoToMetadata } from '@/lib/seo'
 import { getStaticPageSeo, getStaticPageMetaKeyword } from '@/lib/get-page-seo'
 import { HOMEPAGE_FAQS } from '@/lib/data/agency-data'
-import { getServices } from '@/lib/data/content'
-import type { BlogPost } from '@/types'
+import { getServices, getHomeContent } from '@/lib/data/content'
+import type { BlogPost, FAQItem } from '@/types'
 
 const DEFAULT_TITLE = 'SEO Expert Agency — Data-Driven Search Engine Optimization'
 const DEFAULT_DESC =
@@ -55,7 +57,7 @@ export const revalidate = 3600
 export default async function HomePage() {
   const supabase = createPublicSupabase()
 
-  const [{ data: posts }, servicesToRender] = await Promise.all([
+  const [{ data: posts }, servicesToRender, content] = await Promise.all([
     supabase
       .from('blog_posts')
       .select('*')
@@ -63,12 +65,20 @@ export default async function HomePage() {
       .order('published_at', { ascending: false })
       .limit(3),
     getServices(),
+    getHomeContent(),
   ])
 
   const orgSchema = generateOrganizationSchema(organizationDetailsFromSettings(await getSettings()))
 
+  // Schema.org FAQPage markup needs plain strings, so the CMS-edited FAQs
+  // (when present) are kept out of the ReactNode-widened props used elsewhere
+  // on this page — the accordion still shows them exactly as edited.
+  const faqs: FAQItem[] = content.faq.faqs.length > 0
+    ? content.faq.faqs.map(f => ({ question: f.q, answer: f.a }))
+    : HOMEPAGE_FAQS
+
   return (
-    <>
+    <StaticPageEditProvider slug="home" initialContent={content}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
@@ -76,18 +86,23 @@ export default async function HomePage() {
 
       {/* 1. Hero Section with Lead Capture Form */}
       <HeroSection
-        h1="Grow Your Business With Data-Driven SEO"
-        subtitle="We help ambitious brands scale organic search traffic, dominate high-intent keywords, and convert qualified visitors into predictable revenue."
+        h1={<EditableText path="hero.h1" value={content.hero.h1} as="span" />}
+        subtitle={<EditableText path="hero.subheadline" value={content.hero.subheadline} as="span" multiline />}
         badge="RESULT-DRIVEN SEO AGENCY"
-        ctaLabel="Get a Free SEO Consultation"
-        ctaHref="#lead-form"
-        secondaryLabel="Explore Our Services"
-        secondaryHref="/services"
+        ctaLabel={content.hero.cta_primary_text}
+        ctaHref={content.hero.cta_primary_link}
+        secondaryLabel={content.hero.cta_secondary_text}
+        secondaryHref={content.hero.cta_secondary_link}
         rightSlot={<HeroLeadForm sourcePageSlug="homepage-hero" />}
       />
 
       {/* 2. Trust Bar */}
-      <TrustBar />
+      <TrustBar items={content.trust_bar.stats.map((s, i) => ({
+        icon: <span className="text-lg">{s.icon}</span>,
+        value: <EditableText path={`trust_bar.stats.${i}.value`} value={s.value} as="span" />,
+        label: <EditableText path={`trust_bar.stats.${i}.label`} value={s.label} as="span" />,
+        sublabel: s.sublabel ? <EditableText path={`trust_bar.stats.${i}.sublabel`} value={s.sublabel} as="span" /> : undefined,
+      }))} />
 
       {/* 3. Core SEO Services */}
       <Reveal>
@@ -96,7 +111,6 @@ export default async function HomePage() {
           title="Our Core SEO Services"
           subtitle="Data-backed search optimization strategies engineered to scale high-intent traffic, dominate keywords, and grow organic revenue."
           eyebrow="WHAT WE DELIVER"
-          viewMoreHref="/services"
         />
       </Reveal>
 
@@ -108,10 +122,10 @@ export default async function HomePage() {
       {/* 5. High-Impact CTA Banner */}
       <Reveal>
         <CTABanner
-          title="Ready to Grow Your Search Visibility?"
-          subtitle="Schedule a 30-minute discovery call with our senior SEO strategists and receive a free comprehensive technical & keyword opportunity audit."
-          ctaLabel="Get Your Free SEO Consultation"
-          ctaHref="/contact"
+          title={<EditableText path="cta_banner.headline" value={content.cta_banner.headline} as="span" />}
+          subtitle={<EditableText path="cta_banner.subheadline" value={content.cta_banner.subheadline} as="span" multiline />}
+          ctaLabel={content.cta_banner.button_text}
+          ctaHref={content.cta_banner.button_link}
         />
       </Reveal>
 
@@ -132,7 +146,14 @@ export default async function HomePage() {
 
       {/* 9. Why Choose Us */}
       <Reveal>
-        <WhyChooseUs />
+        <WhyChooseUs
+          heading={<EditableText path="why_choose_us.heading" value={content.why_choose_us.heading} as="span" />}
+          items={content.why_choose_us.items.map((it, i) => ({
+            icon: it.icon,
+            title: <EditableText path={`why_choose_us.items.${i}.title`} value={it.title} as="span" />,
+            description: <EditableText path={`why_choose_us.items.${i}.description`} value={it.description} as="span" multiline />,
+          }))}
+        />
       </Reveal>
 
       {/* 10. Client Testimonials */}
@@ -147,13 +168,13 @@ export default async function HomePage() {
 
       {/* 12. FAQ Section with Schema */}
       <Reveal>
-        <FAQSection faqs={HOMEPAGE_FAQS} />
+        <FAQSection faqs={faqs} />
       </Reveal>
 
       {/* 13. Final Conversion CTA */}
       <Reveal>
         <FinalCTASection />
       </Reveal>
-    </>
+    </StaticPageEditProvider>
   )
 }

@@ -11,40 +11,38 @@ import { Repeater, inputCls } from '@/components/admin/ui/Repeater'
 import { EditorChrome, StatusCard, SeoCard, InfoCard } from '@/components/admin/EditorChrome'
 import { StaticSeoCard } from '@/components/admin/StaticSeoCard'
 import { EditorSkeleton } from '@/components/admin/ui/EditorSkeleton'
+import { mergeAboutContent, type AboutContent, type AboutPillar, type HomeUSP } from '@/lib/data/static-pages-schema'
 
-interface Value { icon: string; title: string; description: string }
+// This editor covers everything the live /about page renders (hero,
+// philosophy, pillars, why-choose-us, faq, cta-banner) plus a few
+// dashboard-only sections (main_content, mission, stats) not yet wired into
+// the public page — see mergeAboutContent's note on preserving those.
 interface Stat { value: string; label: string }
-interface USP { icon: string; text: string }
-interface FAQ { q: string; a: string }
-interface AboutContent {
-  hero: { h1: string; subheadline: string; image_url: string | null }
+interface AboutEditorContent extends Omit<AboutContent, 'hero'> {
+  hero: AboutContent['hero'] & { image_url: string | null }
   main_content: string
-  mission: { visible: boolean; heading: string; content: string; values: Value[] }
+  mission: { visible: boolean; heading: string; content: string; values: AboutPillar[] }
   stats: { visible: boolean; items: Stat[] }
-  why_choose_us: { visible: boolean; heading: string; items: USP[] }
-  faq: { visible: boolean; heading: string; faqs: FAQ[] }
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string; bg_color: string }
 }
 
-const merge = (s: Partial<AboutContent> | null): AboutContent => ({
-  hero: { h1: 'About SEO Expert Agency', subheadline: "Data-driven SEO for ambitious brands", image_url: null, ...s?.hero },
-  main_content: s?.main_content ?? '',
-  mission: { visible: true, heading: 'Our Mission', content: '', values: [
-    { icon: '🎯', title: 'Our Mission', description: 'To make organic search growth measurable, honest and repeatable.' },
-    { icon: '💎', title: 'Our Vision', description: 'To be the SEO partner ambitious brands recommend by name.' },
-    { icon: '🤝', title: 'Our Values', description: 'Transparency, technical rigour and long-term thinking.' },
-  ], ...s?.mission },
-  // Empty by default: publish a number here only once it is real and verifiable.
-  stats: { visible: false, items: [], ...s?.stats },
-  why_choose_us: { visible: true, heading: 'Why Choose Us', items: [
-    { icon: '✅', text: 'Senior in-house strategists' }, { icon: '✅', text: 'White-hat, penalty-safe methodology' }, { icon: '✅', text: 'Transparent monthly reporting' },
-  ], ...s?.why_choose_us },
-  faq: { visible: true, heading: 'Common Questions', faqs: [], ...s?.faq },
-  cta_banner: { visible: true, headline: 'Ready to grow your search visibility?', subheadline: 'Book a free consultation with our senior SEO team.', button_text: 'Get Your Free Consultation', button_link: '/contact', bg_color: '#0066FF', ...s?.cta_banner },
-})
+const merge = (s: Partial<AboutEditorContent> | null): AboutEditorContent => {
+  const base = mergeAboutContent(s)
+  return {
+    ...base,
+    hero: { ...base.hero, image_url: s?.hero?.image_url ?? null },
+    main_content: s?.main_content ?? '',
+    mission: { visible: true, heading: 'Our Mission', content: '', values: [
+      { icon: '🎯', title: 'Our Mission', description: 'To make organic search growth measurable, honest and repeatable.' },
+      { icon: '💎', title: 'Our Vision', description: 'To be the SEO partner ambitious brands recommend by name.' },
+      { icon: '🤝', title: 'Our Values', description: 'Transparency, technical rigour and long-term thinking.' },
+    ], ...s?.mission },
+    // Empty by default: publish a number here only once it is real and verifiable.
+    stats: { visible: false, items: [], ...s?.stats },
+  }
+}
 
 export default function AboutEditor() {
-  const p = useStaticPage<AboutContent>('about', 'About', merge)
+  const p = useStaticPage<AboutEditorContent>('about', 'About', merge)
   const c = p.content
   if (p.loading) return <EditorSkeleton />
 
@@ -66,14 +64,15 @@ export default function AboutEditor() {
           <MediaPicker label="Hero Image" value={c.hero.image_url} onChange={v => p.patch('hero', { image_url: v })} />
         </AdminSectionCard>
 
-        <AdminSectionCard title="Main Content">
-          <RichTextEditor value={c.main_content} onChange={v => p.setContent(prev => ({ ...prev, main_content: v }))} placeholder="Tell your story…" />
+        <AdminSectionCard title="Philosophy">
+          <AdminInput label="Heading" value={c.philosophy.heading} onChange={e => p.patch('philosophy', { heading: e.target.value })} />
+          <div><AdminLabel>Intro Paragraph</AdminLabel><textarea value={c.philosophy.intro_paragraph} onChange={e => p.patch('philosophy', { intro_paragraph: e.target.value })} rows={3} className={inputCls} /></div>
+          <AdminInput label="Technical Standard Heading" value={c.philosophy.tech_heading} onChange={e => p.patch('philosophy', { tech_heading: e.target.value })} />
+          <div><AdminLabel>Technical Standard Paragraph</AdminLabel><textarea value={c.philosophy.tech_paragraph} onChange={e => p.patch('philosophy', { tech_paragraph: e.target.value })} rows={3} className={inputCls} /></div>
         </AdminSectionCard>
 
-        <AdminSectionCard title="Mission & Values" visible={c.mission.visible} onVisibleChange={v => p.patch('mission', { visible: v })}>
-          <AdminInput label="Section Heading" value={c.mission.heading} onChange={e => p.patch('mission', { heading: e.target.value })} />
-          <div><AdminLabel>Mission Content</AdminLabel><RichTextEditor value={c.mission.content} onChange={v => p.patch('mission', { content: v })} placeholder="Our mission…" minHeight={140} /></div>
-          <Repeater<Value> items={c.mission.values} max={6} addLabel="+ Add Value" onChange={values => p.patch('mission', { values })} blank={{ icon: '🎯', title: '', description: '' }}
+        <AdminSectionCard title="Core Pillars">
+          <Repeater<AboutPillar> items={c.pillars} max={6} addLabel="+ Add Pillar" onChange={pillars => p.setContent(prev => ({ ...prev, pillars }))} blank={{ icon: '⭐', title: '', description: '' }}
             render={(it, upd) => (
               <div className="grid grid-cols-[3rem_1fr] gap-2 flex-1">
                 <input value={it.icon} onChange={e => upd({ icon: e.target.value })} className={inputCls} />
@@ -85,7 +84,26 @@ export default function AboutEditor() {
             )} />
         </AdminSectionCard>
 
-        <AdminSectionCard title="Stats / Achievements" visible={c.stats.visible} onVisibleChange={v => p.patch('stats', { visible: v })}>
+        <AdminSectionCard title="Main Content" description="Dashboard-only for now — not yet rendered on the public page.">
+          <RichTextEditor value={c.main_content} onChange={v => p.setContent(prev => ({ ...prev, main_content: v }))} placeholder="Tell your story…" />
+        </AdminSectionCard>
+
+        <AdminSectionCard title="Mission & Values" description="Dashboard-only for now — not yet rendered on the public page." visible={c.mission.visible} onVisibleChange={v => p.patch('mission', { visible: v })}>
+          <AdminInput label="Section Heading" value={c.mission.heading} onChange={e => p.patch('mission', { heading: e.target.value })} />
+          <div><AdminLabel>Mission Content</AdminLabel><RichTextEditor value={c.mission.content} onChange={v => p.patch('mission', { content: v })} placeholder="Our mission…" minHeight={140} /></div>
+          <Repeater<AboutPillar> items={c.mission.values} max={6} addLabel="+ Add Value" onChange={values => p.patch('mission', { values })} blank={{ icon: '🎯', title: '', description: '' }}
+            render={(it, upd) => (
+              <div className="grid grid-cols-[3rem_1fr] gap-2 flex-1">
+                <input value={it.icon} onChange={e => upd({ icon: e.target.value })} className={inputCls} />
+                <div className="space-y-2">
+                  <input value={it.title} onChange={e => upd({ title: e.target.value })} className={inputCls} placeholder="Title" />
+                  <input value={it.description} onChange={e => upd({ description: e.target.value })} className={inputCls} placeholder="Description" />
+                </div>
+              </div>
+            )} />
+        </AdminSectionCard>
+
+        <AdminSectionCard title="Stats / Achievements" description="Dashboard-only for now — not yet rendered on the public page." visible={c.stats.visible} onVisibleChange={v => p.patch('stats', { visible: v })}>
           <Repeater<Stat> items={c.stats.items} max={8} addLabel="+ Add Stat" onChange={items => p.patch('stats', { items })} blank={{ value: '', label: '' }}
             render={(it, upd) => (
               <div className="grid grid-cols-2 gap-2 flex-1">
@@ -97,11 +115,14 @@ export default function AboutEditor() {
 
         <AdminSectionCard title="Why Choose Us" visible={c.why_choose_us.visible} onVisibleChange={v => p.patch('why_choose_us', { visible: v })}>
           <AdminInput label="Section Heading" value={c.why_choose_us.heading} onChange={e => p.patch('why_choose_us', { heading: e.target.value })} />
-          <Repeater<USP> items={c.why_choose_us.items} max={6} addLabel="+ Add USP" onChange={items => p.patch('why_choose_us', { items })} blank={{ icon: '✅', text: '' }}
+          <Repeater<HomeUSP> items={c.why_choose_us.items} max={6} addLabel="+ Add Reason" onChange={items => p.patch('why_choose_us', { items })} blank={{ icon: '✅', title: '', description: '' }}
             render={(it, upd) => (
               <div className="grid grid-cols-[3rem_1fr] gap-2 flex-1">
                 <input value={it.icon} onChange={e => upd({ icon: e.target.value })} className={inputCls} />
-                <input value={it.text} onChange={e => upd({ text: e.target.value })} className={inputCls} placeholder="Benefit" />
+                <div className="space-y-2">
+                  <input value={it.title} onChange={e => upd({ title: e.target.value })} className={inputCls} placeholder="Reason title" />
+                  <input value={it.description} onChange={e => upd({ description: e.target.value })} className={inputCls} placeholder="Reason description" />
+                </div>
               </div>
             )} />
         </AdminSectionCard>

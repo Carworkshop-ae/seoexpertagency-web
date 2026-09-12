@@ -35,7 +35,10 @@ interface Props {
   /** Existing row id; omitted when creating. */
   id?: string
   basePath: string
-  publicPrefix: string
+  /** Public URL prefix, e.g. `/industries`. Omit when this content type has no
+   *  standalone public page (e.g. services, which only render as cards on the
+   *  homepage) — the URL hint and slug-change warning are hidden instead. */
+  publicPrefix?: string
   singular: string
   /** Field holding the human name — used to auto-derive the slug on create. */
   titleField: 'name' | 'title' | 'headline'
@@ -190,11 +193,11 @@ export function ContentForm({ id, basePath, publicPrefix, singular, titleField, 
             <AdminInput
               label="URL Slug"
               required
-              hint={slug ? `${publicPrefix}/${slug}` : undefined}
+              hint={slug && publicPrefix ? `${publicPrefix}/${slug}` : undefined}
               value={slug}
               onChange={e => { setSlugTouched(true); set('slug', e.target.value.toLowerCase()) }}
             />
-            {id && (
+            {id && publicPrefix && (
               <p className="mt-1 text-xs text-amber-600">
                 Changing the slug moves this page&apos;s URL. Anything linking to the old
                 address will 404 unless you add a redirect.

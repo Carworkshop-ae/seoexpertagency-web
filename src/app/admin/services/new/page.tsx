@@ -11,7 +11,6 @@ export default function NewServicePage() {
       <div className="p-6">
         <ContentForm
           basePath="services"
-          publicPrefix="/services"
           singular="Service"
           titleField="name"
           sections={serviceSections}

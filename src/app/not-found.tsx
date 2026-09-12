@@ -14,7 +14,7 @@ export default function NotFound() {
         <p className="text-7xl font-extrabold text-primary mb-2 tracking-tight">404</p>
         <h1 className="text-2xl font-extrabold text-dark mb-3">Page Not Found</h1>
         <p className="text-xs sm:text-sm text-slate-600 mb-8 leading-relaxed">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved. Explore our core SEO services or contact our strategists.
+          The page you&apos;re looking for doesn&apos;t exist or has been moved. Head back home or contact our strategists.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
@@ -24,10 +24,10 @@ export default function NotFound() {
             <Home size={15} /> Back to Homepage
           </Link>
           <Link
-            href="/services"
+            href="/contact"
             className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:border-primary hover:text-primary bg-slate-50 transition-all"
           >
-            View SEO Services <ArrowRight size={14} />
+            Contact Us <ArrowRight size={14} />
           </Link>
         </div>
       </div>

@@ -25,7 +25,6 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         <ContentForm
           id={id}
           basePath="services"
-          publicPrefix="/services"
           singular="Service"
           titleField="name"
           sections={serviceSections}

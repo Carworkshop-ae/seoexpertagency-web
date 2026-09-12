@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
 import { CheckCircle2, AlertCircle, Loader2, ArrowRight, MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { SEO_SERVICES } from '@/lib/data/agency-data'
@@ -11,9 +12,15 @@ type ServiceOption = { id: string; slug: string; name: string }
 
 interface ContactFormProps {
   services?: ServiceOption[]
+  heroH1?: ReactNode
+  heroSubtitle?: ReactNode
 }
 
-export function ContactForm({ services }: ContactFormProps) {
+export function ContactForm({
+  services,
+  heroH1 = 'Get in Touch With Our SEO Strategists',
+  heroSubtitle = 'Request a comprehensive technical audit, discuss custom retainers, or explore strategic partnerships.',
+}: ContactFormProps) {
   const serviceOptions: ServiceOption[] = services ?? SEO_SERVICES
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -70,10 +77,10 @@ export function ContactForm({ services }: ContactFormProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
           <h1 className="display-tight text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark mt-4">
-            Get in Touch With Our SEO Strategists
+            {heroH1}
           </h1>
           <p className="text-slate-600 mt-2 text-sm sm:text-base max-w-2xl">
-            Request a comprehensive technical audit, discuss custom retainers, or explore strategic partnerships.
+            {heroSubtitle}
           </p>
         </div>
       </div>

@@ -1,6 +1,5 @@
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import { ServiceFeatureCard } from '@/components/sections/ServiceFeatureCard'
+import { AddServiceCard } from '@/components/sections/AddServiceCard'
 import type { SEOServiceData } from '@/lib/data/agency-data'
 import { getServices } from '@/lib/data/content'
 
@@ -9,7 +8,6 @@ interface ServiceCardsSectionProps {
   title?: string
   subtitle?: string
   eyebrow?: string
-  viewMoreHref?: string
   limit?: number
 }
 
@@ -18,7 +16,6 @@ export async function ServiceCardsSection({
   title = 'Our Core SEO Services',
   subtitle = 'Data-backed search optimization strategies engineered to scale high-intent traffic, dominate keywords, and grow organic revenue.',
   eyebrow = 'WHAT WE DELIVER',
-  viewMoreHref = '/services',
   limit,
 }: ServiceCardsSectionProps) {
   const services = servicesProp ?? await getServices()
@@ -27,7 +24,7 @@ export async function ServiceCardsSection({
   if (displayedServices.length === 0) return null
 
   return (
-    <section className="py-16 lg:py-24 bg-slate-50/50 border-b border-slate-100" aria-labelledby="services-heading">
+    <section id="services" className="py-16 lg:py-24 bg-slate-50/50 border-b border-slate-100" aria-labelledby="services-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 lg:mb-16 max-w-2xl mx-auto">
           {eyebrow && (
@@ -49,19 +46,8 @@ export async function ServiceCardsSection({
           {displayedServices.map(service => (
             <ServiceFeatureCard key={service.slug} service={service} />
           ))}
+          {!limit && <AddServiceCard />}
         </div>
-
-        {viewMoreHref && (
-          <div className="text-center mt-12">
-            <Link
-              href={viewMoreHref}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-slate-200 hover:border-primary px-6 py-3.5 text-xs font-bold text-slate-800 hover:text-primary shadow-sm transition-all"
-            >
-              Explore All SEO Services
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-        )}
       </div>
     </section>
   )

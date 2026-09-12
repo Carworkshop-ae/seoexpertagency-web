@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import type { Json } from '@/types/database'
 
-const SETTINGS_PATHS = ['/', '/about', '/contact', '/services', '/brands', '/locations', '/blog', '/faq']
+const SETTINGS_PATHS = ['/', '/about', '/contact', '/brands', '/locations', '/blog', '/faq']
 
 const BulkSchema = z.object({
   settings: z.array(z.object({ key: z.string().min(1).max(100), value: z.unknown() })).min(1).max(100),

@@ -1,11 +1,12 @@
+import type { ReactNode } from 'react'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
 import { ShieldCheck, BarChart3, Sparkles } from 'lucide-react'
 
 interface BreadcrumbItem { label: string; href?: string }
 interface PageHeaderProps {
   breadcrumb: BreadcrumbItem[]
-  title: string
-  subtitle?: string | null
+  title: ReactNode
+  subtitle?: ReactNode
   showTrust?: boolean
   eyebrow?: string
 }

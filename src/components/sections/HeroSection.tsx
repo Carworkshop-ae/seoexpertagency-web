@@ -4,8 +4,8 @@ import { ShieldCheck, ArrowRight, BarChart3, Search, Sparkles } from 'lucide-rea
 
 interface HeroStat { value: string; label: string }
 interface HeroSectionProps {
-  h1?: string
-  subtitle?: string
+  h1?: ReactNode
+  subtitle?: ReactNode
   ctaLabel?: string
   ctaHref?: string
   secondaryLabel?: string
@@ -33,8 +33,8 @@ export function HeroSection({
   subtitle = 'We help ambitious brands scale organic search traffic, dominate high-intent keywords, and convert qualified visitors into predictable revenue.',
   ctaLabel = 'Get a Free SEO Consultation',
   ctaHref = '#lead-form',
-  secondaryLabel = 'Explore Our Services',
-  secondaryHref = '/services',
+  secondaryLabel,
+  secondaryHref,
   badge = 'RESULT-DRIVEN SEO AGENCY',
   heroStats,
   rightSlot,
@@ -115,7 +115,7 @@ export function HeroSection({
                 {ctaLabel}
                 <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
-              {secondaryLabel && (
+              {secondaryLabel && secondaryHref && (
                 <Link
                   href={secondaryHref}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 text-white font-semibold text-sm ring-1 ring-white/30 hover:bg-white/20 backdrop-blur transition-all"

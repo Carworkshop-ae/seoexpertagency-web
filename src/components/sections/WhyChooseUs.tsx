@@ -35,14 +35,14 @@ const SEO_REASONS = [
 
 interface WhyChooseUsItem {
   icon?: string | React.ReactNode
-  title?: string
-  description?: string
-  text?: string
+  title?: React.ReactNode
+  description?: React.ReactNode
+  text?: React.ReactNode
 }
 
 interface WhyChooseUsProps {
-  heading?: string
-  subtitle?: string
+  heading?: React.ReactNode
+  subtitle?: React.ReactNode
   eyebrow?: string
   items?: WhyChooseUsItem[]
 }

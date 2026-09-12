@@ -10,7 +10,6 @@ export const STATIC_PAGES: Array<{ slug: string; title: string }> = [
   { slug: 'faq', title: 'FAQ' },
   { slug: 'privacy', title: 'Privacy Policy' },
   { slug: 'terms', title: 'Terms & Conditions' },
-  { slug: 'services-listing', title: 'Services List Page' },
   { slug: 'brands-listing', title: 'Brands List Page' },
   { slug: 'locations-listing', title: 'Locations List Page' },
   { slug: 'blog-listing', title: 'Blog List Page' },
@@ -19,7 +18,6 @@ export const STATIC_PAGES: Array<{ slug: string; title: string }> = [
 // Maps a static-page slug to the public path(s) to revalidate after save.
 export const STATIC_PAGE_PATHS: Record<string, string> = {
   home: '/',
-  'services-listing': '/services',
   'brands-listing': '/brands',
   'locations-listing': '/locations',
   'blog-listing': '/blog',

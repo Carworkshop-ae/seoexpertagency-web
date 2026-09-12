@@ -4,9 +4,12 @@ import { WhyChooseUs } from '@/components/sections/WhyChooseUs'
 import { ProcessSteps } from '@/components/sections/ProcessSteps'
 import { FAQSection } from '@/components/sections/FAQSection'
 import { CTABanner } from '@/components/sections/CTABanner'
+import { StaticPageEditProvider } from '@/components/inline-edit/StaticPageEditProvider'
+import { EditableText } from '@/components/inline-edit/EditableText'
 import { generateOrganizationSchema, organizationDetailsFromSettings } from '@/lib/page-engine/schema'
 import { getSettings } from '@/lib/hooks/useSettings'
-import { TrendingUp, ShieldCheck, Target, Users } from 'lucide-react'
+import { getAboutContent } from '@/lib/data/content'
+import { HOMEPAGE_FAQS } from '@/lib/data/agency-data'
 
 const DEFAULT_TITLE = 'About SEO Expert Agency | Data-Driven Search Engine Optimization'
 const DEFAULT_DESC =
@@ -19,34 +22,18 @@ export const metadata: Metadata = {
 
 export const revalidate = 86400
 
-const CORE_PILLARS = [
-  {
-    icon: <TrendingUp className="w-6 h-6 text-primary" />,
-    title: 'Data-Driven Engineering',
-    description: 'We treat SEO as a technical engineering discipline. Every recommendation is anchored in log analysis, crawl diagnostics, and statistical keyword intent.',
-  },
-  {
-    icon: <ShieldCheck className="w-6 h-6 text-primary" />,
-    title: '100% White-Hat Integrity',
-    description: 'Zero shortcuts or private blog networks. We build durable search visibility through authentic digital PR, editorial relevance, and flawless technical hygiene.',
-  },
-  {
-    icon: <Target className="w-6 h-6 text-primary" />,
-    title: 'Commercial Intent Focus',
-    description: 'We prioritize search queries that drive qualified sales pipelines, inbound demos, and high-margin transactions over vanity impression spikes.',
-  },
-  {
-    icon: <Users className="w-6 h-6 text-primary" />,
-    title: 'Senior Strategist Direct Access',
-    description: 'Every client partners directly with seasoned SEO directors and technical leads who have hands-on experience scaling high-traffic enterprise architectures.',
-  },
-]
-
 export default async function AboutPage() {
-  const schema = generateOrganizationSchema(organizationDetailsFromSettings(await getSettings()))
+  const [schema, content] = await Promise.all([
+    getSettings().then(s => generateOrganizationSchema(organizationDetailsFromSettings(s))),
+    getAboutContent(),
+  ])
+
+  const faqs = content.faq.faqs.length > 0
+    ? content.faq.faqs.map(f => ({ question: f.q, answer: f.a }))
+    : HOMEPAGE_FAQS
 
   return (
-    <div>
+    <StaticPageEditProvider slug="about" initialContent={content}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -54,8 +41,8 @@ export default async function AboutPage() {
       <PageHeader
         breadcrumb={[{ label: 'Home', href: '/' }, { label: 'About Us' }]}
         eyebrow="OUR MISSION & PHILOSOPHY"
-        title="Engineering Predictable Organic Search Growth"
-        subtitle="We partner with ambitious enterprises and high-growth brands to transform search engines into their highest-ROI customer acquisition channel."
+        title={<EditableText path="hero.h1" value={content.hero.h1} as="span" />}
+        subtitle={<EditableText path="hero.subheadline" value={content.hero.subheadline} as="span" multiline />}
       />
 
       {/* Agency Philosophy Section */}
@@ -63,19 +50,19 @@ export default async function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-slate-700 leading-relaxed text-base sm:text-lg">
           <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-dark mb-4">
-              Moving Beyond Superficial SEO Metrics
+              <EditableText path="philosophy.heading" value={content.philosophy.heading} as="span" />
             </h2>
             <p>
-              Traditional search marketing agencies often drown clients in vanity reports filled with impression metrics and ranking spikes for irrelevant queries. At <strong>SEO Expert Agency</strong>, we founded our consultancy on a radically transparent premise: <em>SEO only matters when it drives qualified pipeline, organic revenue, and measurable enterprise value.</em>
+              <EditableText path="philosophy.intro_paragraph" value={content.philosophy.intro_paragraph} as="span" multiline />
             </p>
           </div>
 
           <div>
             <h3 className="text-xl font-bold text-dark mb-3">
-              Our Technical Engineering Standard
+              <EditableText path="philosophy.tech_heading" value={content.philosophy.tech_heading} as="span" />
             </h3>
             <p>
-              Modern search engines are sophisticated neural information retrieval systems. Winning competitive commercial queries requires full-stack technical excellence: lightning-fast Core Web Vitals, pristine semantic schema architectures, crawl-budget optimization for millions of URLs, and structured topical entity authority.
+              <EditableText path="philosophy.tech_paragraph" value={content.philosophy.tech_paragraph} as="span" multiline />
             </p>
           </div>
         </div>
@@ -94,14 +81,18 @@ export default async function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-            {CORE_PILLARS.map((pillar, idx) => (
+            {content.pillars.map((pillar, idx) => (
               <div key={idx} className="card-premium p-7 sm:p-8 rounded-2xl bg-white border border-slate-200/80 flex items-start gap-4">
-                <div className="shrink-0 w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center">
+                <div className="shrink-0 w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center text-xl">
                   {pillar.icon}
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-dark mb-1.5">{pillar.title}</h3>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{pillar.description}</p>
+                  <h3 className="font-bold text-base text-dark mb-1.5">
+                    <EditableText path={`pillars.${idx}.title`} value={pillar.title} as="span" />
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    <EditableText path={`pillars.${idx}.description`} value={pillar.description} as="span" multiline />
+                  </p>
                 </div>
               </div>
             ))}
@@ -113,18 +104,25 @@ export default async function AboutPage() {
       <ProcessSteps />
 
       {/* Why Choose Us */}
-      <WhyChooseUs />
+      <WhyChooseUs
+        heading={<EditableText path="why_choose_us.heading" value={content.why_choose_us.heading} as="span" />}
+        items={content.why_choose_us.items.map((it, i) => ({
+          icon: it.icon,
+          title: <EditableText path={`why_choose_us.items.${i}.title`} value={it.title} as="span" />,
+          description: <EditableText path={`why_choose_us.items.${i}.description`} value={it.description} as="span" multiline />,
+        }))}
+      />
 
       {/* FAQs */}
-      <FAQSection />
+      <FAQSection faqs={faqs} />
 
       {/* CTA */}
       <CTABanner
-        title="Ready to Partner With an Engineering-Grade SEO Agency?"
-        subtitle="Schedule a free technical diagnostic and strategy presentation with our senior directors."
-        ctaLabel="Book Strategy Discovery"
-        ctaHref="/contact"
+        title={<EditableText path="cta_banner.headline" value={content.cta_banner.headline} as="span" />}
+        subtitle={<EditableText path="cta_banner.subheadline" value={content.cta_banner.subheadline} as="span" multiline />}
+        ctaLabel={content.cta_banner.button_text}
+        ctaHref={content.cta_banner.button_link}
       />
-    </div>
+    </StaticPageEditProvider>
   )
 }

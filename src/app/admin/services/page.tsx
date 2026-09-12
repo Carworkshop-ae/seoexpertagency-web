@@ -21,7 +21,6 @@ export default async function ServiceListPage() {
         <ContentTable
           rows={(data ?? []) as unknown as ContentRow[]}
           basePath="services"
-          publicPrefix="/services"
           singular="Service"
           plural="Services"
           canDelete={acting?.role === 'super_admin' || acting?.role === 'admin'}

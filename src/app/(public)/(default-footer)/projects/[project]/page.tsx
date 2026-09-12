@@ -6,7 +6,7 @@ import { HeroSection } from '@/components/sections/HeroSection'
 import { HeroLeadForm } from '@/components/sections/HeroLeadForm'
 import { CTABanner } from '@/components/sections/CTABanner'
 import { Breadcrumb } from '@/components/ui/Breadcrumb'
-import { getProjects, getServices } from '@/lib/data/content'
+import { getProjects } from '@/lib/data/content'
 import { generateServicePageSchema } from '@/lib/page-engine/schema'
 import { CustomSchemas } from '@/components/seo/CustomSchemas'
 import { getProjectSeo } from '@/lib/get-page-seo'
@@ -49,7 +49,6 @@ export const revalidate = 3600
 
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const projects = await getProjects()
-  const services = await getServices()
   const { project: slug } = await params
   const project = projects.find(p => p.slug === slug)
 
@@ -245,18 +244,14 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Services Deployed in This Engagement:</p>
           <div className="flex flex-wrap justify-center gap-2">
-            {project.services.map((s, i) => {
-              const matchedService = services.find(srv => srv.name.toLowerCase() === s.toLowerCase() || s.toLowerCase().includes(srv.name.toLowerCase()))
-              return (
-                <Link
-                  key={i}
-                  href={matchedService ? `/services/${matchedService.slug}` : '/services'}
-                  className="bg-white border border-slate-200 text-slate-800 hover:border-primary hover:text-primary px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm"
-                >
-                  {s} →
-                </Link>
-              )
-            })}
+            {project.services.map((s, i) => (
+              <span
+                key={i}
+                className="bg-white border border-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold shadow-sm"
+              >
+                {s}
+              </span>
+            ))}
           </div>
         </div>
       </section>
