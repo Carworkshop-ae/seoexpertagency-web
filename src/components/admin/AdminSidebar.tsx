@@ -4,7 +4,7 @@ import { Suspense, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard, HelpCircle, Languages, Wrench, Factory, Briefcase, MapPin,
+  LayoutDashboard, HelpCircle, Languages, Briefcase, MapPin,
   FileText, FileSearch, Search, Settings, UserCog, Users, LayoutTemplate, Files,
   Image as ImageIcon, Activity, LogOut, ChevronDown, type LucideIcon,
 } from 'lucide-react'
@@ -15,15 +15,16 @@ interface NavItem { label: string; href: string; icon: LucideIcon }
 
 // The ONLY hrefs the restricted seo_editor role may see. Must stay in step with
 // the allowlist in src/proxy.ts, which is what actually enforces this.
+// Services and Industries no longer have admin pages — they're edited inline
+// on the homepage, which any signed-in staff role (including seo_editor) can
+// already do via the still-allowed /api/admin/services and /api/admin/industries.
 const SEO_EDITOR_ALLOWED = [
-  '/admin/services', '/admin/industries', '/admin/projects', '/admin/locations',
+  '/admin/projects', '/admin/locations',
   '/admin/seo-blog', '/admin/static-page-seo', '/admin/search-content',
 ]
 
 const MAIN_NAV: NavItem[] = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { label: 'Services', href: '/admin/services', icon: Wrench },
-  { label: 'Industries', href: '/admin/industries', icon: Factory },
   { label: 'Projects', href: '/admin/projects', icon: Briefcase },
   { label: 'Locations', href: '/admin/locations', icon: MapPin },
   { label: 'SEO Pages', href: '/admin/seo-pages', icon: Files },

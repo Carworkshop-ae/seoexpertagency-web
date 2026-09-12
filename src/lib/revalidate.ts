@@ -25,11 +25,12 @@ const STATIC_PATHS: Record<string, string[]> = {
 }
 
 // Detail path + the listing that indexes it, per content type. The homepage is
-// added on top for projects because it surfaces there. Services have no
-// standalone public pages — they only render as cards on the homepage.
+// added on top for projects because it surfaces there. Services and
+// industries have no standalone public pages — they only render as cards on
+// the homepage.
 const CONTENT_PATHS: Record<'service' | 'industry' | 'project' | 'location', (slug?: string) => string[]> = {
   service:  () => ['/'],
-  industry: slug => [`/industries/${slug}`, '/industries'],
+  industry: () => ['/'],
   project:  slug => [`/projects/${slug}`, '/projects', '/'],
   location: slug => [`/locations/${slug}`, '/locations'],
 }

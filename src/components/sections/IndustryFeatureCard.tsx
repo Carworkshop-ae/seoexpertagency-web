@@ -3,14 +3,14 @@
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { X } from 'lucide-react'
-import { SERVICE_ICONS, SERVICE_ICON_MAP, DEFAULT_SERVICE_ICON } from '@/lib/service-icons'
+import { INDUSTRY_ICONS, INDUSTRY_ICON_MAP, DEFAULT_INDUSTRY_ICON } from '@/lib/industry-icons'
 import { EditableText } from '@/components/inline-edit/EditableText'
 import { IconPicker } from '@/components/inline-edit/IconPicker'
 import { useAdminEdit } from '@/components/inline-edit/AdminEditProvider'
-import type { SEOServiceData } from '@/lib/data/agency-data'
+import type { SEOIndustryData } from '@/lib/data/agency-data'
 
-interface ServiceFeatureCardProps {
-  service?: Partial<SEOServiceData> & {
+interface IndustryFeatureCardProps {
+  industry?: Partial<SEOIndustryData> & {
     name?: string
     slug?: string
     shortDescription?: string
@@ -18,8 +18,8 @@ interface ServiceFeatureCardProps {
   }
 }
 
-async function patchService(id: string, patch: Record<string, unknown>) {
-  const res = await fetch(`/api/admin/services/${id}`, {
+async function patchIndustry(id: string, patch: Record<string, unknown>) {
+  const res = await fetch(`/api/admin/industries/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(patch),
@@ -27,20 +27,20 @@ async function patchService(id: string, patch: Record<string, unknown>) {
   if (!res.ok) throw new Error('Save failed')
 }
 
-export function ServiceFeatureCard({ service }: ServiceFeatureCardProps) {
+export function IndustryFeatureCard({ industry }: IndustryFeatureCardProps) {
   const router = useRouter()
   const { isAdmin, editMode } = useAdminEdit()
   const canEdit = isAdmin && editMode
-  const name = service?.name || 'SEO Service'
-  const description = service?.shortDescription || ''
-  const iconKey = service?.icon || 'search'
-  const Icon = SERVICE_ICON_MAP[iconKey] || DEFAULT_SERVICE_ICON
-  const id = service?.id
+  const name = industry?.name || 'Industry'
+  const description = industry?.shortDescription || ''
+  const iconKey = industry?.icon || ''
+  const Icon = INDUSTRY_ICON_MAP[iconKey] || DEFAULT_INDUSTRY_ICON
+  const id = industry?.id
 
   async function save(patch: Record<string, unknown>) {
     if (!id) return
     try {
-      await patchService(id, patch)
+      await patchIndustry(id, patch)
       toast.success('Saved')
       router.refresh()
     } catch {
@@ -52,9 +52,9 @@ export function ServiceFeatureCard({ service }: ServiceFeatureCardProps) {
     if (!id) return
     if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return
     try {
-      const res = await fetch(`/api/admin/services/${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/industries/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Delete failed')
-      toast.success('Service deleted')
+      toast.success('Industry deleted')
       router.refresh()
     } catch {
       toast.error('Delete failed — please try again')
@@ -81,7 +81,7 @@ export function ServiceFeatureCard({ service }: ServiceFeatureCardProps) {
       )}
 
       {canEdit && id ? (
-        <IconPicker options={SERVICE_ICONS} value={iconKey} onSelect={v => void save({ icon: v })} trigger={iconTile} />
+        <IconPicker options={INDUSTRY_ICONS} value={iconKey} onSelect={v => void save({ icon: v })} trigger={iconTile} />
       ) : (
         iconTile
       )}

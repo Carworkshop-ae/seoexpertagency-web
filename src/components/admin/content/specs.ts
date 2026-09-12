@@ -33,60 +33,10 @@ const closingSection: FormSection = {
   ],
 }
 
-export const serviceSections: FormSection[] = [
-  {
-    title: 'Service Details',
-    fields: [
-      { kind: 'text', name: 'name', label: 'Service Name', required: true, max: 80 },
-      { kind: 'textarea', name: 'short_description', label: 'Card Summary', max: 200, rows: 2, hint: 'Shown on the services grid' },
-      { kind: 'text', name: 'icon', label: 'Icon Key', max: 40, hint: 'See src/lib/service-icons.ts' },
-      { kind: 'text', name: 'starting_price_label', label: 'Price Label', max: 40, hint: 'e.g. From $1,499/mo' },
-    ],
-  },
-  heroSection('service'),
-  {
-    title: 'Problems, Benefits & Process',
-    fields: [
-      { kind: 'repeater', name: 'problems_json', label: 'Problems We Solve', addLabel: '+ Add problem', fields: TITLE_DESC },
-      { kind: 'repeater', name: 'benefits_json', label: 'Benefits', addLabel: '+ Add benefit', fields: TITLE_DESC },
-      {
-        kind: 'repeater', name: 'process_json', label: 'Our Process', addLabel: '+ Add step',
-        fields: {
-          keys: [
-            { key: 'step', label: 'Step number (e.g. 01)' },
-            { key: 'title', label: 'Step title' },
-            { key: 'description', label: 'Step description', textarea: true },
-          ],
-        },
-      },
-    ],
-  },
-  closingSection,
-]
-
-export const industrySections: FormSection[] = [
-  {
-    title: 'Industry Details',
-    fields: [
-      { kind: 'text', name: 'name', label: 'Industry Name', required: true, max: 80 },
-      { kind: 'textarea', name: 'short_description', label: 'Card Summary', max: 200, rows: 2 },
-      { kind: 'text', name: 'icon', label: 'Icon Key', max: 40, hint: 'See src/lib/service-icons.ts' },
-    ],
-  },
-  heroSection('industry'),
-  {
-    title: 'Challenges & Strategy',
-    fields: [
-      { kind: 'repeater', name: 'challenges_json', label: 'Industry SEO Challenges', addLabel: '+ Add challenge', fields: TITLE_DESC },
-      { kind: 'repeater', name: 'strategy_json', label: 'Our Strategy', addLabel: '+ Add strategy point', fields: TITLE_DESC },
-      {
-        kind: 'list', name: 'recommended_services', label: 'Recommended Services',
-        placeholder: 'Service slug, e.g. technical-seo', addLabel: '+ Add service',
-      },
-    ],
-  },
-  closingSection,
-]
+// Services and Industries no longer have a dedicated admin form — they're
+// edited inline on the homepage (ServiceFeatureCard/IndustryFeatureCard +
+// AddServiceCard/AddIndustryCard, all hitting the same /api/admin/services
+// and /api/admin/industries routes this spec system used to feed).
 
 export const projectSections: FormSection[] = [
   {

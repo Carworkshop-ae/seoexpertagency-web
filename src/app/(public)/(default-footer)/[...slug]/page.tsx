@@ -25,10 +25,12 @@ import type { SeoJson } from '@/lib/schemas/seo'
 // A freeform "general" SEO landing page. Its slug isn't nested under any fixed
 // prefix, so this catch-all only ever fires for a first segment that doesn't
 // match one of (default-footer)'s static routes (about, blog, contact, faq,
-// industries, locations, lp, pricing, privacy, projects, services, terms,
-// (home)) — Next.js always matches a static segment before a dynamic one, so
-// a page slug colliding with one of those names would simply be unreachable;
-// that's a data-entry concern for whoever picks the slug, not a routing bug.
+// locations, lp, pricing, privacy, projects, terms, (home)) — Next.js always
+// matches a static segment before a dynamic one, so a page slug colliding
+// with one of those names would simply be unreachable; that's a data-entry
+// concern for whoever picks the slug, not a routing bug. (services and
+// industries no longer have standalone pages — they only render as cards on
+// the homepage — so those names are free to use as SEO page slugs now.)
 
 interface PageProps {
   params: Promise<{ slug: string[] }>

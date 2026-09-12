@@ -32,7 +32,9 @@ export default async function AdminDashboardPage() {
   const s = await getStats()
 
   const stats = [
-    { label: 'Published Services', value: s.servicesPublished ?? 0, href: '/admin/services', icon: Wrench, color: 'text-[#4472C4] bg-[#EEF3FB]' },
+    // No admin page anymore — services are edited inline on the homepage —
+    // so this card is a plain stat, not a link.
+    { label: 'Published Services', value: s.servicesPublished ?? 0, href: null, icon: Wrench, color: 'text-[#4472C4] bg-[#EEF3FB]' },
     { label: 'Published Posts', value: s.postsPublished ?? 0, href: '/admin/seo-blog', icon: FileText, color: 'text-green-600 bg-green-50' },
     { label: 'Published Case Studies', value: s.projectsPublished ?? 0, href: '/admin/projects', icon: Briefcase, color: 'text-[#E8601C] bg-orange-50' },
     { label: 'New Leads', value: s.leadsNew ?? 0, href: '/admin/leads?status=new', icon: Inbox, color: 'text-[#EF4444] bg-red-50' },
@@ -57,12 +59,21 @@ export default async function AdminDashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map(c => {
             const Icon = c.icon
-            return (
-              <Link key={c.label} href={c.href} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-5 hover:shadow-md transition-all">
+            const cardBody = (
+              <>
                 <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${c.color}`}><Icon size={18} /></span>
                 <p className="text-3xl font-extrabold text-[#1F2937] mt-3">{c.value.toLocaleString('en-AE')}</p>
                 <p className="text-xs text-[#6B7280] mt-0.5 font-medium">{c.label}</p>
+              </>
+            )
+            return c.href ? (
+              <Link key={c.label} href={c.href} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-5 hover:shadow-md transition-all">
+                {cardBody}
               </Link>
+            ) : (
+              <div key={c.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-5">
+                {cardBody}
+              </div>
             )
           })}
         </div>

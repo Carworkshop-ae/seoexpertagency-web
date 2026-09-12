@@ -6,40 +6,39 @@ import toast from 'react-hot-toast'
 import { Plus } from 'lucide-react'
 import { useAdminEdit } from '@/components/inline-edit/AdminEditProvider'
 import { IconPicker } from '@/components/inline-edit/IconPicker'
-import { SERVICE_ICONS, SERVICE_ICON_MAP, DEFAULT_SERVICE_ICON } from '@/lib/service-icons'
+import { INDUSTRY_ICONS, INDUSTRY_ICON_MAP, DEFAULT_INDUSTRY_ICON } from '@/lib/industry-icons'
 
-// Inline "add a service" affordance rendered at the end of the service grid
-// (homepage and anywhere else ServiceCardsSection appears), visible only to a
-// signed-in admin with edit mode on. Posts straight to the existing services
-// CRUD route — no new backend needed.
-export function AddServiceCard() {
+// Inline "add an industry" affordance rendered at the end of the industry
+// grid (homepage), visible only to a signed-in admin with edit mode on.
+// Posts straight to the existing industries CRUD route — no new backend needed.
+export function AddIndustryCard() {
   const { isAdmin, editMode } = useAdminEdit()
   const canEdit = isAdmin && editMode
   const router = useRouter()
   const [adding, setAdding] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [icon, setIcon] = useState(SERVICE_ICONS[0].value)
+  const [icon, setIcon] = useState(INDUSTRY_ICONS[0].value)
   const [saving, setSaving] = useState(false)
-  const Icon = SERVICE_ICON_MAP[icon] || DEFAULT_SERVICE_ICON
+  const Icon = INDUSTRY_ICON_MAP[icon] || DEFAULT_INDUSTRY_ICON
 
   if (!canEdit) return null
 
   async function submit() {
-    if (!name.trim()) { toast.error('Service name is required'); return }
+    if (!name.trim()) { toast.error('Industry name is required'); return }
     setSaving(true)
     try {
-      const res = await fetch('/api/admin/services', {
+      const res = await fetch('/api/admin/industries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim(), short_description: description.trim() || null, icon, status: 'published' }),
       })
       if (!res.ok) throw new Error('Create failed')
-      toast.success('Service added')
-      setName(''); setDescription(''); setIcon(SERVICE_ICONS[0].value); setAdding(false)
+      toast.success('Industry added')
+      setName(''); setDescription(''); setIcon(INDUSTRY_ICONS[0].value); setAdding(false)
       router.refresh()
     } catch {
-      toast.error('Could not add service — please try again')
+      toast.error('Could not add industry — please try again')
     } finally {
       setSaving(false)
     }
@@ -53,7 +52,7 @@ export function AddServiceCard() {
         className="flex flex-col items-center justify-center gap-2 p-6 sm:p-7 rounded-2xl border-2 border-dashed border-primary/40 text-primary hover:border-primary hover:bg-primary-50/50 transition-all min-h-[180px]"
       >
         <Plus size={22} />
-        <span className="text-sm font-bold">Add Service</span>
+        <span className="text-sm font-bold">Add Industry</span>
       </button>
     )
   }
@@ -61,7 +60,7 @@ export function AddServiceCard() {
   return (
     <div className="flex flex-col p-6 sm:p-7 rounded-2xl bg-white border-2 border-primary/40 gap-3">
       <IconPicker
-        options={SERVICE_ICONS}
+        options={INDUSTRY_ICONS}
         value={icon}
         onSelect={setIcon}
         trigger={
@@ -74,7 +73,7 @@ export function AddServiceCard() {
         autoFocus
         value={name}
         onChange={e => setName(e.target.value)}
-        placeholder="Service name"
+        placeholder="Industry name"
         className="text-base sm:text-lg font-bold text-dark border-b border-slate-200 focus:outline-none focus:border-primary pb-1"
       />
       <textarea
@@ -96,7 +95,7 @@ export function AddServiceCard() {
         <button
           type="button"
           disabled={saving}
-          onClick={() => { setAdding(false); setName(''); setDescription(''); setIcon(SERVICE_ICONS[0].value) }}
+          onClick={() => { setAdding(false); setName(''); setDescription(''); setIcon(INDUSTRY_ICONS[0].value) }}
           className="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 text-xs font-bold"
         >
           Cancel
