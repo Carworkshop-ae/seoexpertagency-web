@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import { getHreflangCode } from '@/lib/market'
 import './globals.css'
 
 const inter = Inter({
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
     images: ['/og-default.jpg'],
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: siteUrl },
+  alternates: { canonical: siteUrl, languages: { [getHreflangCode()]: siteUrl, 'x-default': siteUrl } },
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [

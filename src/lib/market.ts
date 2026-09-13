@@ -37,6 +37,19 @@ const MARKETS: Record<MarketCode, Market> = {
   XX: { code: 'XX', countryCode: 'XX', countryName: 'Global / International', hasGeo: false },
 }
 
+// hreflang codes for each market's single language/region — used as the
+// self-referencing hreflang tag every page emits by default (see resolveSEO
+// in lib/seo.ts). XX (the .com global build) targets en-us per client spec.
+const HREFLANG_CODES: Record<MarketCode, string> = {
+  AE: 'en-ae',
+  GB: 'en-GB',
+  XX: 'en-us',
+}
+
+export function getHreflangCode(): string {
+  return HREFLANG_CODES[getMarket().code]
+}
+
 function isMarketCode(value: string): value is MarketCode {
   return value === 'AE' || value === 'GB' || value === 'XX'
 }
