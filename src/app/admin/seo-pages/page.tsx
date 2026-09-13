@@ -11,7 +11,7 @@ export default async function SeoPagesListPage() {
   const service = createServiceClient()
   const { data } = await service
     .from('seo_pages')
-    .select('id, slug, status, sort_order, updated_at, title:headline, seo_title, faq_json, state:locations(name), creator:users!created_by(full_name)')
+    .select('id, slug, status, sort_order, updated_at, title:headline, seo_title, faq_json, creator:users!created_by(full_name)')
     .order('sort_order', { ascending: true })
 
   return (

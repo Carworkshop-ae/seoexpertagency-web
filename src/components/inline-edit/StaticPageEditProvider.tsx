@@ -1,10 +1,11 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { getByPath, setByPath } from '@/lib/inline-edit/path'
 import { useAdminEdit } from './AdminEditProvider'
+import { EditContext, useEditContext } from './EditContext'
 
 interface StaticPageRow {
   title?: string | null
@@ -16,24 +17,8 @@ interface StaticPageRow {
   meta_keyword?: string | null
 }
 
-interface StaticPageEditContextValue {
-  /** True once it's actually safe to render editable affordances — admin,
-   *  edit mode on, and the full page row has loaded (needed to avoid
-   *  clobbering fields this component doesn't manage on save). */
-  canEdit: boolean
-  saving: boolean
-  getValue: (path: string) => unknown
-  save: (path: string, value: unknown) => Promise<void>
-}
-
-const noop = async () => {}
-const StaticPageEditContext = createContext<StaticPageEditContextValue>({
-  canEdit: false, saving: false, getValue: () => undefined, save: noop,
-})
-
-export function useStaticPageEdit(): StaticPageEditContextValue {
-  return useContext(StaticPageEditContext)
-}
+// Kept as an alias — this used to be the only edit context in the codebase.
+export const useStaticPageEdit = useEditContext
 
 interface StaticPageEditProviderProps {
   /** static_pages.slug this content belongs to, e.g. "home". */
@@ -108,8 +93,8 @@ export function StaticPageEditProvider({ slug, initialContent, children }: Stati
   }, [content, row, slug, router])
 
   return (
-    <StaticPageEditContext.Provider value={{ canEdit, saving, getValue, save }}>
+    <EditContext.Provider value={{ canEdit, saving, getValue, save }}>
       {children}
-    </StaticPageEditContext.Provider>
+    </EditContext.Provider>
   )
 }
