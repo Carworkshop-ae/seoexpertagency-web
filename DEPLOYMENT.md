@@ -1,6 +1,6 @@
 # SEO Expert Agency — Production Deployment Guide
 
-This guide takes a fresh machine to a running production site at `https://seoexpertagency.com`.
+This guide takes a fresh machine to a running production site at `https://seoexpertsagency.ae`.
 Follow the steps in order. Every command is copy-pasteable. The Next.js app lives at the repo
 root — no custom Root Directory setting is needed in Vercel.
 
@@ -18,7 +18,7 @@ root — no custom Root Directory setting is needed in Vercel.
 - **Accounts:** [Supabase](https://supabase.com), [Vercel](https://vercel.com),
   [Resend](https://resend.com), [Upstash](https://upstash.com) (optional),
   [Sentry](https://sentry.io) (recommended), Google Analytics (optional)
-- **Domain:** `seoexpertagency.com` with DNS you control
+- **Domain:** `seoexpertsagency.ae` with DNS you control
 
 ---
 
@@ -161,7 +161,7 @@ Authentication → Users → **Add user → Create new user**
 Then SQL Editor (replace UUID from the Users table, and the email/name):
 ```sql
 INSERT INTO users (id, email, full_name, role)
-VALUES ('<user-uuid-from-auth-users>', 'admin@seoexpertagency.com', 'Admin', 'super_admin');
+VALUES ('<user-uuid-from-auth-users>', 'admin@seoexpertsagency.ae', 'Admin', 'super_admin');
 ```
 
 This is a one-time bootstrap step — `POST /api/admin/users/invite` requires an already-authenticated
@@ -219,8 +219,8 @@ Tune the rest later via **Admin → Settings** (phone, WhatsApp, footer, nav, SE
 
 ### 2.1 Resend (email — required for lead notifications)
 - resend.com → API Keys → **Create** (`seoexpertagency-production`) → `RESEND_API_KEY`
-- Domains → Add `seoexpertagency.com` → add the SPF/DKIM/DMARC DNS records → verify (≤24 h)
-- From address used by code: `noreply@seoexpertagency.com` (overridable in Admin → Settings → Email)
+- Domains → Add `seoexpertsagency.ae` → add the SPF/DKIM/DMARC DNS records → verify (≤24 h)
+- From address used by code: `noreply@seoexpertsagency.ae` (overridable in Admin → Settings → Email)
 
 ### 2.2 Upstash Redis (rate limiting — optional)
 - console.upstash.com → Create Database (`seoexpertagency-rate-limit`)
@@ -233,7 +233,7 @@ Tune the rest later via **Admin → Settings** (phone, WhatsApp, footer, nav, SE
 - Alert: email on first occurrence of a new issue
 
 ### 2.4 Google Analytics (optional)
-- analytics.google.com → property for `seoexpertagency.com` → Measurement ID `G-XXXXXXXXXX`
+- analytics.google.com → property for `seoexpertsagency.ae` → Measurement ID `G-XXXXXXXXXX`
   → `NEXT_PUBLIC_GA_MEASUREMENT_ID` (or set in Admin → Settings → SEO & Analytics)
 
 ---
@@ -263,7 +263,7 @@ Set for **Production + Preview + Development** unless noted:
 | `NEXT_PUBLIC_SUPABASE_URL` | ✅ | from 1.2 |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ | from 1.2 |
 | `SUPABASE_SERVICE_ROLE_KEY` | ✅ | from 1.2 — **secret** |
-| `NEXT_PUBLIC_SITE_URL` | ✅ | `https://seoexpertagency.com` (per-env: use the preview URL on Preview) |
+| `NEXT_PUBLIC_SITE_URL` | ✅ | `https://seoexpertsagency.ae` (per-env: use the preview URL on Preview) |
 | `REVALIDATION_SECRET` | ✅ | from Step 3 |
 | `RESEND_API_KEY` | ✅ | from 2.1 |
 | `ADMIN_EMAIL` | ✅ | lead notification recipient |
@@ -286,14 +286,14 @@ Click **Deploy** (~3–5 min). Expected route types in the build log:
 Public pages must be `○`/`●`; only `/admin/*` and `/api/*` may be `ƒ`.
 
 ### 4.4 Custom Domain (Settings → Domains)
-Add `seoexpertagency.com` and `www.seoexpertagency.com`. At your registrar:
+Add `seoexpertsagency.ae` and `www.seoexpertsagency.ae`. At your registrar:
 ```
 A      @     76.76.19.19
 CNAME  www   cname.vercel-dns.com
 ```
 Vercel auto-provisions SSL. Verify:
 ```bash
-curl -I https://seoexpertagency.com    # HTTP/2 200, server: Vercel
+curl -I https://seoexpertsagency.ae    # HTTP/2 200, server: Vercel
 ```
 
 ---
@@ -301,21 +301,21 @@ curl -I https://seoexpertagency.com    # HTTP/2 200, server: Vercel
 ## Step 5 — Post-Deployment Verification
 
 ```bash
-curl -I https://seoexpertagency.com                       # 200
-curl -I https://seoexpertagency.com/admin                 # 302 → /admin/login
+curl -I https://seoexpertsagency.ae                       # 200
+curl -I https://seoexpertsagency.ae/admin                 # 302 → /admin/login
 curl -s -o /dev/null -w "%{http_code}\n" \
-     https://seoexpertagency.com/api/admin/services       # 401
-curl -s https://seoexpertagency.com/robots.txt            # Disallow: /admin/  + sitemap-index
-curl -s https://seoexpertagency.com/sitemap.xml           # valid XML <sitemapindex>
-curl -I https://seoexpertagency.com/services/local-seo    # x-nextjs-cache: MISS, then HIT on 2nd
+     https://seoexpertsagency.ae/api/admin/services       # 401
+curl -s https://seoexpertsagency.ae/robots.txt            # Disallow: /admin/  + sitemap-index
+curl -s https://seoexpertsagency.ae/sitemap.xml           # valid XML <sitemapindex>
+curl -I https://seoexpertsagency.ae/services/local-seo    # x-nextjs-cache: MISS, then HIT on 2nd
 ```
-- Log in at `https://seoexpertagency.com/admin/login` with the Step 1.6 credentials.
+- Log in at `https://seoexpertsagency.ae/admin/login` with the Step 1.6 credentials.
 - **Seed content** in admin: Services → Industries → Projects → Locations, then
   **SEO Pages → Add SEO Page** to generate service × location landing pages.
 
 ### 5.1 Google Search Console
-search.google.com/search-console → add property `https://seoexpertagency.com` → verify via DNS TXT
-→ Sitemaps → submit `https://seoexpertagency.com/sitemap.xml`.
+search.google.com/search-console → add property `https://seoexpertsagency.ae` → verify via DNS TXT
+→ Sitemaps → submit `https://seoexpertsagency.ae/sitemap.xml`.
 
 ### 5.2 Monitoring
 Sentry alert > 5 errors/hr · Vercel deployment notifications · Supabase DB-size alert at 80 %.
@@ -327,7 +327,7 @@ Sentry alert > 5 errors/hr · Vercel deployment notifications · Supabase DB-siz
 Admin saves already call `revalidatePage()` directly, so webhooks are a **belt-and-suspenders**
 backup for direct DB edits. Dashboard → **Database → Webhooks → Create**:
 
-Common settings — URL `https://seoexpertagency.com/api/revalidate`, method POST, headers
+Common settings — URL `https://seoexpertsagency.ae/api/revalidate`, method POST, headers
 `x-revalidation-secret: <REVALIDATION_SECRET>` + `Content-Type: application/json`.
 
 | Webhook | Table | Events | Payload |
@@ -343,7 +343,7 @@ Common settings — URL `https://seoexpertagency.com/api/revalidate`, method POS
 Test: each webhook → **Send test** → expect Vercel function log `revalidated:true`.
 Manual purge-all escape hatch:
 ```bash
-curl -X POST https://seoexpertagency.com/api/revalidate \
+curl -X POST https://seoexpertsagency.ae/api/revalidate \
   -H "x-revalidation-secret: <SECRET>" -H "Content-Type: application/json" \
   -d '{"type":"all"}'
 ```
@@ -352,7 +352,7 @@ curl -X POST https://seoexpertagency.com/api/revalidate \
 
 ## Step 7 — Performance Verification
 ```bash
-npx lighthouse https://seoexpertagency.com --only-categories=performance,seo,accessibility --view
+npx lighthouse https://seoexpertsagency.ae --only-categories=performance,seo,accessibility --view
 ```
 Targets: Performance ≥ 85 · SEO 100 · Accessibility ≥ 90.
 Core Web Vitals (Search Console, after 28 days): LCP < 2.5s · CLS < 0.1 · FCP < 1.5s.

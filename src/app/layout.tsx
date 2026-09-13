@@ -18,7 +18,7 @@ export const viewport: Viewport = {
 const rawUrl = process.env.NEXT_PUBLIC_SITE_URL
 const siteUrl = rawUrl && (rawUrl.startsWith('http://') || rawUrl.startsWith('https://'))
   ? rawUrl
-  : 'https://seoexpertagency.com'
+  : 'https://seoexpertsagency.ae'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

@@ -107,7 +107,7 @@ export function SeoPageForm({ id, initial }: Props) {
           <AdminInput
             label="URL Slug"
             required
-            hint={slug ? `seoexpertagency.com/${slug}` : undefined}
+            hint={slug ? `seoexpertsagency.ae/${slug}` : undefined}
             value={slug}
             onChange={e => { setSlugTouched(true); set('slug', e.target.value.toLowerCase()) }}
           />

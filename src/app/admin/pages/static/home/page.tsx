@@ -236,7 +236,7 @@ export default function HomeEditor() {
 
         <AdminSectionCard title="SEO (Advanced)" defaultOpen={false}>
           <EntitySeoTab endpoint="/api/admin/pages/static/home/seo" initial={seoJson}
-            pageUrl="https://seoexpertagency.com" defaultTitle={c.hero.h1} defaultDescription={c.hero.subheadline}
+            pageUrl="https://seoexpertsagency.ae" defaultTitle={c.hero.h1} defaultDescription={c.hero.subheadline}
             autoSchemas={['Organization', 'WebSite', 'LocalBusiness']} />
         </AdminSectionCard>
 
