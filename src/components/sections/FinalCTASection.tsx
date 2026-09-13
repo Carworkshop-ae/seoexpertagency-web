@@ -1,10 +1,11 @@
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 import { ArrowRight, Phone, Sparkles } from 'lucide-react'
 
 interface FinalCTASectionProps {
-  heading?: string
-  subtitle?: string
-  ctaText?: string
+  heading?: ReactNode
+  subtitle?: ReactNode
+  ctaText?: ReactNode
   ctaHref?: string
 }
 

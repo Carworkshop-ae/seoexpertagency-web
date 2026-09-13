@@ -16,7 +16,6 @@ export interface SeoPageRow {
   title: string | null
   seo_title: string | null
   faq_json: unknown
-  state: { name: string } | null
   creator: { full_name: string } | null
 }
 
@@ -166,7 +165,6 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
           <table className="w-full text-sm">
             <thead className="bg-zinc-50 border-b border-zinc-200">
               <tr className="text-left text-xs font-bold text-zinc-600 uppercase tracking-wide">
-                <th className="px-4 py-3">State</th>
                 <th className="px-4 py-3">Page Name</th>
                 <th className="px-4 py-3">Slug URL</th>
                 <th className="px-4 py-3">Meta Title</th>
@@ -183,7 +181,6 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
                 const isBusy = busyId === row.id
                 return (
                   <tr key={row.id} className="hover:bg-zinc-50/70">
-                    <td className="px-4 py-3 text-xs text-zinc-600">{row.state?.name ?? '—'}</td>
                     <td className="px-4 py-3">
                       <Link href={`/admin/seo-pages/${row.id}`} className="font-semibold text-zinc-900 hover:text-[#4472C4]">
                         {label}
