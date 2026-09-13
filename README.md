@@ -7,7 +7,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Auth-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployment-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
 
-[**SEO Expert Agency**](https://seoexpertagency.com) is a data-driven SEO agency marketing site.
+[**SEO Expert Agency**](https://seoexpertsagency.ae) is a data-driven SEO agency marketing site.
 Built with Next.js 16 (App Router), React 19, Supabase, and TailwindCSS, it showcases the
 agency's services, industries, and case studies, generates local-SEO landing pages, and runs a
 full content-management admin portal behind it.
@@ -129,7 +129,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 REVALIDATION_SECRET=your-32-char-random-secret
 RESEND_API_KEY=re_your_resend_api_key
-ADMIN_EMAIL=admin@seoexpertagency.com
+ADMIN_EMAIL=admin@seoexpertsagency.ae
 ```
 
 ### 3. Run Development Server

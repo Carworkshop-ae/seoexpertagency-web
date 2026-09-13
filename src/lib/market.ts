@@ -1,10 +1,11 @@
 // One codebase, three deployments — each domain serves a different market:
 //
-//   seoexpertagency.com  → global. SEO pages carry NO country or state.
-//   seoexpertagency.uk   → United Kingdom. Country is fixed to UK; the State
-//                          dropdown lists UK locations.
-//   seoexpertagency.ae   → United Arab Emirates. Country fixed to UAE; the
-//                          State dropdown lists the emirates.
+//   seoexpertsagency.com  → global. SEO pages carry NO country or state.
+//   seoexpertsagency.uk   → United Kingdom. Country is fixed to UK; the State
+//                           dropdown lists UK locations.
+//   seoexpertsagency.ae   → United Arab Emirates. Country fixed to UAE; the
+//                           State dropdown lists the emirates. (The only live
+//                           deployment as of writing.)
 //
 // The market is a property of the DEPLOYMENT, not of the content — an admin on
 // the .ae site should never be choosing between "United Arab Emirates" and
@@ -13,12 +14,13 @@
 // Set NEXT_PUBLIC_MARKET explicitly in each Vercel project (AE | GB | XX).
 //
 // The fallback deliberately does NOT read `.com` as global. NEXT_PUBLIC_SITE_URL
-// is `https://seoexpertagency.com` on the live AE deployment — a `.com` there
-// means "nobody has updated this yet", not "this is the global site". Inferring
-// XX from it would silently strip the Country and State fields off the very
-// site that needs them. Only the two unambiguous TLDs are inferred; the global
-// build must declare NEXT_PUBLIC_MARKET=XX, which is right for the one mode
-// that removes fields rather than adding them.
+// could still be `https://seoexpertsagency.com` on the live AE deployment if
+// nobody has updated it yet — a `.com` there means "not configured", not
+// "this is the global site". Inferring XX from it would silently strip the
+// Country and State fields off the very site that needs them. Only the two
+// unambiguous TLDs are inferred; the global build must declare
+// NEXT_PUBLIC_MARKET=XX, which is right for the one mode that removes fields
+// rather than adding them.
 
 export type MarketCode = 'AE' | 'GB' | 'XX'
 
