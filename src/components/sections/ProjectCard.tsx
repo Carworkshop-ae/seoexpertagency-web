@@ -1,8 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
 import { ArrowRight } from 'lucide-react'
 import { EditableText } from '@/components/inline-edit/EditableText'
 import { useAdminEdit } from '@/components/inline-edit/AdminEditProvider'
@@ -12,31 +10,24 @@ interface ProjectCardProps {
   project: SEOProjectData
 }
 
-async function patchProject(id: string, patch: Record<string, unknown>) {
-  const res = await fetch(`/api/admin/projects/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(patch),
-  })
-  if (!res.ok) throw new Error('Save failed')
-}
-
 // Mirrors ServiceFeatureCard's onSave pattern: getProjects() only ever returns
 // real DB rows (or an empty array — SEO_PROJECTS has no seed fallback, unlike
 // services/industries), so `project.id` is always a real row here.
 export function ProjectCard({ project }: ProjectCardProps) {
-  const router = useRouter()
-  const { isAdmin, editMode } = useAdminEdit()
+  const { isAdmin, editMode, cards } = useAdminEdit()
   const canEdit = isAdmin && editMode
+  const draft = cards.patchFor('projects', project.id)
+  const p = {
+    industry: (draft?.industry as string | undefined) ?? project.industry,
+    timeline: (draft?.timeline as string | undefined) ?? project.timeline,
+    title: (draft?.title as string | undefined) ?? project.title,
+    client: (draft?.client as string | undefined) ?? project.client,
+    summary: (draft?.summary as string | undefined) ?? project.summary,
+  }
 
-  async function save(patch: Record<string, unknown>) {
-    try {
-      await patchProject(project.id, patch)
-      toast.success('Saved')
-      router.refresh()
-    } catch {
-      toast.error('Save failed — please try again')
-    }
+  // Buffered until "Done Editing" (see AdminEditProvider).
+  function save(patch: Record<string, unknown>) {
+    cards.patch('projects', project.id, patch, `Edit ${p.title}`)
   }
 
   return (
@@ -44,25 +35,25 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <div>
         <div className="flex items-center justify-between mb-4">
           <span className="text-[11px] font-bold text-primary bg-primary-50 px-3 py-1 rounded-full border border-primary-200/50">
-            <EditableText value={project.industry} onSave={canEdit ? v => save({ industry: v }) : undefined} />
+            <EditableText value={p.industry} onSave={canEdit ? v => save({ industry: v }) : undefined} />
           </span>
           <span className="text-[11px] font-semibold text-slate-400">
-            <EditableText value={project.timeline} onSave={canEdit ? v => save({ timeline: v }) : undefined} />
+            <EditableText value={p.timeline} onSave={canEdit ? v => save({ timeline: v }) : undefined} />
           </span>
         </div>
 
         <h3 className="text-lg font-extrabold text-dark group-hover:text-primary transition-colors mb-2 leading-snug">
-          <EditableText value={project.title} onSave={canEdit ? v => save({ title: v }) : undefined} />
+          <EditableText value={p.title} onSave={canEdit ? v => save({ title: v }) : undefined} />
         </h3>
 
         <p className="text-xs font-medium text-slate-500 mb-4">
           Client: <span className="text-slate-800 font-semibold">
-            <EditableText value={project.client} onSave={canEdit ? v => save({ client: v }) : undefined} />
+            <EditableText value={p.client} onSave={canEdit ? v => save({ client: v }) : undefined} />
           </span>
         </p>
 
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
-          <EditableText multiline value={project.summary} onSave={canEdit ? v => save({ summary: v }) : undefined} />
+          <EditableText multiline value={p.summary} onSave={canEdit ? v => save({ summary: v }) : undefined} />
         </p>
 
         {/* Client-verified metrics only — omitted when none are approved. */}
