@@ -137,7 +137,8 @@ export const CreateSeoPageSchema = z.object({
   // Geo-targeting (state/location) is no longer set from the SEO page form —
   // the column stays nullable (005_market_geography.sql) for old rows that
   // still carry a location_id, but new/edited pages never set one.
-  location_id: z.string().uuid().nullable().optional(),
+  // The edit form round-trips a null column as '' — treat blank as "none".
+  location_id: z.preprocess(v => (v === '' ? null : v), z.string().uuid().nullable().optional()),
   headline: z.string().max(300).trim().optional().nullable(),
   subheadline: z.string().max(500).trim().optional().nullable(),
   overview: z.string().max(20000).optional().nullable(),
