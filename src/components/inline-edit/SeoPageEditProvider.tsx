@@ -1,8 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getByPath, setByPath } from '@/lib/inline-edit/path'
 import { useAdminEdit } from './AdminEditProvider'
 import { EditContext } from './EditContext'
@@ -41,8 +39,7 @@ interface SeoPageEditProviderProps {
 // otherwise folds it into `sections_json`, and PATCHes only that one key so a
 // section edit never touches this page's other fields.
 export function SeoPageEditProvider({ id, initialContent, children }: SeoPageEditProviderProps) {
-  const { isAdmin, editMode } = useAdminEdit()
-  const router = useRouter()
+  const { isAdmin, editMode, record, registerCommitter } = useAdminEdit()
   const [content, setContent] = useState<Record<string, unknown>>(() => ({
     headline: initialContent.headline ?? '',
     subheadline: initialContent.subheadline ?? '',
@@ -52,40 +49,52 @@ export function SeoPageEditProvider({ id, initialContent, children }: SeoPageEdi
     faq_json: initialContent.faq_json ?? [],
     ...(initialContent.sections_json ?? {}),
   }))
-  const [saving, setSaving] = useState(false)
+  const savedRef = useRef<Record<string, unknown> | null>(null)
+  const contentRef = useRef<Record<string, unknown>>(content)
+  if (savedRef.current === null) savedRef.current = content
 
   const getValue = useCallback((path: string) => getByPath(content, path), [content])
   const canEdit = isAdmin && editMode
 
+  // Buffered like StaticPageEditProvider: applied locally + recorded for
+  // undo/redo, and PATCHed once on "Done Editing".
   const save = useCallback(async (path: string, value: unknown) => {
-    const prevContent = content
-    const nextContent = setByPath(content, path, value) as Record<string, unknown>
-    setContent(nextContent)
-    setSaving(true)
-    try {
-      const topKey = path.split('.')[0]
-      const body: Record<string, unknown> = DIRECT_COLUMNS.has(topKey)
-        ? { [topKey]: nextContent[topKey] }
-        : { sections_json: Object.fromEntries(Object.entries(nextContent).filter(([k]) => !DIRECT_COLUMNS.has(k))) }
+    const prev = contentRef.current
+    const next = setByPath(prev, path, value) as Record<string, unknown>
+    contentRef.current = next
+    setContent(next)
+    record({
+      label: `Edit ${path}`,
+      undo: () => { contentRef.current = prev; setContent(prev) },
+      redo: () => { contentRef.current = next; setContent(next) },
+    })
+  }, [record])
 
+  useEffect(() => {
+    if (!isAdmin) return
+    return registerCommitter(`seo-page:${id}`, async () => {
+      const now = contentRef.current
+      const saved = savedRef.current ?? {}
+      if (now === saved) return
+      const body: Record<string, unknown> = {}
+      for (const key of DIRECT_COLUMNS) {
+        if (JSON.stringify(now[key]) !== JSON.stringify(saved[key])) body[key] = now[key]
+      }
+      const sectionsOf = (c: Record<string, unknown>) => Object.fromEntries(Object.entries(c).filter(([k]) => !DIRECT_COLUMNS.has(k)))
+      if (JSON.stringify(sectionsOf(now)) !== JSON.stringify(sectionsOf(saved))) body.sections_json = sectionsOf(now)
+      if (Object.keys(body).length === 0) return
       const res = await fetch(`/api/admin/seo-pages/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      if (!res.ok) throw new Error('save failed')
-      toast.success('Saved')
-      router.refresh()
-    } catch {
-      setContent(prevContent)
-      toast.error('Save failed — please try again')
-    } finally {
-      setSaving(false)
-    }
-  }, [content, id, router])
+      if (!res.ok) throw new Error('Saving the SEO page failed')
+      savedRef.current = now
+    })
+  }, [isAdmin, id, registerCommitter])
 
   return (
-    <EditContext.Provider value={{ canEdit, saving, getValue, save }}>
+    <EditContext.Provider value={{ canEdit, saving: false, getValue, save }}>
       {children}
     </EditContext.Provider>
   )
