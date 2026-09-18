@@ -15,7 +15,7 @@ export interface HomeTestimonial { quote: string; name: string; role: string; ra
 export interface HomeSectionHeader { title: string; subtitle: string; eyebrow: string }
 
 export interface HomeContent {
-  hero: { h1: string; subheadline: string; cta_primary_text: string; cta_primary_link: string; cta_secondary_text: string; cta_secondary_link: string; image_url: string | null }
+  hero: { badge: string; h1: string; subheadline: string; cta_primary_text: string; cta_primary_link: string; cta_secondary_text: string; cta_secondary_link: string; image_url: string | null }
   trust_bar: { visible: boolean; stats: HomeStat[] }
   services: { visible: boolean; heading: string }
   how_it_works: { visible: boolean; heading: string; steps: HomeStep[] }
@@ -24,10 +24,10 @@ export interface HomeContent {
   blog_preview: { visible: boolean; heading: string; count: number }
   locations: { visible: boolean; heading: string }
   faq: { visible: boolean; heading: string; faqs: HomeFAQ[] }
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string; bg_color: string }
+  cta_banner: { visible: boolean; badge: string; headline: string; subheadline: string; button_text: string; button_link: string; secondary_text: string; secondary_link: string; bg_color: string }
   process_steps: { title: string; subtitle: string; eyebrow: string; steps: HomeStep[] }
   testimonials: { title: string; subtitle: string; eyebrow: string; items: HomeTestimonial[] }
-  final_cta: { heading: string; subtitle: string; cta_text: string }
+  final_cta: { badge: string; heading: string; subtitle: string; cta_text: string; phone_text: string; phone_link: string }
   services_section: HomeSectionHeader
   packages_section: HomeSectionHeader
   industries_section: HomeSectionHeader
@@ -40,7 +40,7 @@ export interface HomeContent {
 // the homepage's original hardcoded copy exactly, so wiring the page up to
 // this schema is visually a no-op until an admin actually edits something.
 export const HOME_DEFAULTS: HomeContent = {
-  hero: { h1: 'Grow Your Business With Data-Driven SEO', subheadline: 'We help ambitious brands scale organic search traffic, dominate high-intent keywords, and convert qualified visitors into predictable revenue.', cta_primary_text: 'Get a Free SEO Consultation', cta_primary_link: '#lead-form', cta_secondary_text: 'Explore Our Services', cta_secondary_link: '/#services', image_url: null },
+  hero: { badge: 'RESULT-DRIVEN SEO AGENCY', h1: 'Grow Your Business With Data-Driven SEO', subheadline: 'We help ambitious brands scale organic search traffic, dominate high-intent keywords, and convert qualified visitors into predictable revenue.', cta_primary_text: 'Get a Free SEO Consultation', cta_primary_link: '#lead-form', cta_secondary_text: 'Explore Our Services', cta_secondary_link: '/#services', image_url: null },
   trust_bar: { visible: true, stats: [
     { icon: '📈', value: 'Data-Driven SEO', label: 'Search Strategies', sublabel: 'Custom tailored roadmaps' },
     { icon: '🛡️', value: '100% White-Hat', label: 'Safe Link Building', sublabel: 'Penalty-proof compliance' },
@@ -66,7 +66,7 @@ export const HOME_DEFAULTS: HomeContent = {
   blog_preview: { visible: true, heading: 'Latest from Our Blog', count: 3 },
   locations: { visible: true, heading: 'Where We Work' },
   faq: { visible: true, heading: 'Common Questions', faqs: [] },
-  cta_banner: { visible: true, headline: 'Ready to Grow Your Search Visibility?', subheadline: 'Schedule a 30-minute discovery call with our senior SEO strategists and receive a free comprehensive technical & keyword opportunity audit.', button_text: 'Get Your Free SEO Consultation', button_link: '/contact', bg_color: '#0066FF' },
+  cta_banner: { visible: true, badge: 'Zero Obligation · Custom Strategy', headline: 'Ready to Grow Your Search Visibility?', subheadline: 'Schedule a 30-minute discovery call with our senior SEO strategists and receive a free comprehensive technical & keyword opportunity audit.', button_text: 'Get Your Free SEO Consultation', button_link: '/contact', secondary_text: 'Call Us Directly', secondary_link: 'tel:+9714800736', bg_color: '#0066FF' },
   process_steps: {
     title: 'Our Proven 4-Step SEO Framework',
     subtitle: 'A systematic, repeatable methodology that turns search engines into your most predictable customer acquisition channel.',
@@ -89,9 +89,12 @@ export const HOME_DEFAULTS: HomeContent = {
     ],
   },
   final_cta: {
+    badge: 'Scale Your Organic Revenue',
     heading: "Let's Build Your Search Growth Strategy",
     subtitle: 'Get in touch today for an in-depth competitive search audit, technical roadmap, and predictable organic growth plan.',
     cta_text: 'Book a Free Consultation',
+    phone_text: 'Call +971 4 800 736',
+    phone_link: 'tel:+9714800736',
   },
   services_section: { title: 'Our Core SEO Services', subtitle: 'Data-backed search optimization strategies engineered to scale high-intent traffic, dominate keywords, and grow organic revenue.', eyebrow: 'WHAT WE DELIVER' },
   packages_section: { title: 'Predictable, Transparent SEO Packages', subtitle: 'Choose the ideal engagement tier engineered to outpace your competitors and scale organic customer acquisition.', eyebrow: 'TRANSPARENT PRICING' },
