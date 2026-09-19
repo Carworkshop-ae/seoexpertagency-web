@@ -8,6 +8,7 @@ import { Plus, Search, Trash2, Pencil, ExternalLink, Copy, RefreshCw } from 'luc
 import { AdminLinkButton, AdminButton } from '@/components/admin/ui/AdminButton'
 import { EmptyState } from '@/components/admin/ui/AdminStates'
 import { ConfirmModal } from '@/components/admin/ConfirmModal'
+import { AdminPagination } from '@/components/admin/ui/AdminPagination'
 
 export interface SeoPageRow {
   id: string
@@ -33,6 +34,7 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
   const [q, setQ] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [pageSize, setPageSize] = useState(30)
+  const [page, setPage] = useState(1)
   const [pendingDelete, setPendingDelete] = useState<SeoPageRow | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -47,7 +49,9 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
     })
   }, [rows, q, statusFilter])
 
-  const visible = filtered.slice(0, pageSize)
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const currentPage = Math.min(page, pageCount)
+  const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   function refresh() {
     setRefreshing(true)
@@ -114,7 +118,7 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
           Display
           <select
             value={pageSize}
-            onChange={e => setPageSize(Number(e.target.value))}
+            onChange={e => { setPageSize(Number(e.target.value)); setPage(1) }}
             aria-label="Rows to display"
             className="h-9 px-2 border border-zinc-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#4472C4]"
           >
@@ -129,7 +133,7 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
           <input
             value={q}
-            onChange={e => setQ(e.target.value)}
+            onChange={e => { setQ(e.target.value); setPage(1) }}
             placeholder="Search page name…"
             aria-label="Search SEO pages"
             className="w-full h-9 pl-9 pr-3 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#4472C4]"
@@ -137,7 +141,7 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
         </div>
         <select
           value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value)}
+          onChange={e => { setStatusFilter(e.target.value); setPage(1) }}
           aria-label="Filter by status"
           className="h-9 px-3 border border-zinc-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#4472C4]"
         >
@@ -259,10 +263,11 @@ export function SeoPagesTable({ rows: initialRows, canDelete }: Props) {
               })}
             </tbody>
           </table>
+          <AdminPagination page={currentPage} pageCount={pageCount} totalResults={filtered.length} onPageChange={setPage} />
         </div>
       )}
 
-      {filtered.length > 0 && (
+      {pageCount <= 1 && filtered.length > 0 && (
         <p className="text-xs text-zinc-400">
           Showing {visible.length} of {filtered.length} {filtered.length === 1 ? 'result' : 'results'}
         </p>
