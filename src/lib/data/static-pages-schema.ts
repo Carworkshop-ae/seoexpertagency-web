@@ -312,28 +312,44 @@ export function mergePolicyContent(defaults: PolicyContent, saved: Partial<Polic
 }
 
 // ─── FAQ page ────────────────────────────────────────────────────────────────
-// Scoped to the hero and CTA banner in this pass — the admin editor's
-// category-grouped FAQ list doesn't yet match the live page's flat extended
-// list (HOMEPAGE_FAQS + a few FAQ-page-only questions); reconciling those is
-// left for a follow-up.
+// `categories` matches the admin editor's shape exactly (src/app/admin/pages/
+// static/faq/page.tsx) — that editor was reachable and already writing this
+// field, but the public page rendered a hardcoded EXTENDED_FAQS list instead
+// of reading it back. Empty by default so the public accordion keeps showing
+// EXTENDED_FAQS until an admin actually adds a question in the dashboard —
+// nothing changes visually until edited (the public page checks total
+// question count across categories, not category count, since the admin
+// editor pre-seeds category names before any questions exist in them).
 
+export interface FaqPageCategory { name: string; faqs: HomeFAQ[] }
 export interface FaqPageContent {
   hero: { h1: string; subheadline: string }
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string }
+  categories: FaqPageCategory[]
+  cta_banner: { visible: boolean; badge: string; headline: string; subheadline: string; button_text: string; button_link: string; secondary_text: string; secondary_link: string }
 }
 
 export const FAQ_PAGE_DEFAULTS: FaqPageContent = {
   hero: { h1: 'Frequently Asked SEO Questions', subheadline: 'Everything you need to know about our data-driven search marketing methodology, deliverables, and retainers.' },
-  cta_banner: { visible: true, headline: 'Have a Question Not Listed Here?', subheadline: 'Schedule a 15-minute consultation with our senior SEO architects to discuss your specific website needs.', button_text: 'Ask Our SEO Team', button_link: '/contact' },
+  categories: [],
+  cta_banner: {
+    visible: true,
+    badge: 'Zero Obligation · Custom Strategy',
+    headline: 'Have a Question Not Listed Here?',
+    subheadline: 'Schedule a 15-minute consultation with our senior SEO architects to discuss your specific website needs.',
+    button_text: 'Ask Our SEO Team',
+    button_link: '/contact',
+    // Blank by default — same "remove Call Us Directly" request as Home/About.
+    secondary_text: '',
+    secondary_link: 'tel:+9714800736',
+  },
 }
 
-// `...c` preserves the admin dashboard's `categories` field (this public-page
-// schema doesn't render it yet — see note above) across an inline save.
 export function mergeFaqPageContent(saved: Partial<FaqPageContent> | null | undefined): FaqPageContent {
   const c = saved ?? {}
   return {
     ...c,
     hero: { ...FAQ_PAGE_DEFAULTS.hero, ...c.hero },
+    categories: c.categories ?? FAQ_PAGE_DEFAULTS.categories,
     cta_banner: { ...FAQ_PAGE_DEFAULTS.cta_banner, ...c.cta_banner },
   }
 }

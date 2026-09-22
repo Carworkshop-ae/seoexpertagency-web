@@ -14,14 +14,24 @@ interface Category { name: string; faqs: FAQ[] }
 interface FaqContent {
   hero: { h1: string; subheadline: string }
   categories: Category[]
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string }
+  cta_banner: { visible: boolean; badge: string; headline: string; subheadline: string; button_text: string; button_link: string; secondary_text: string; secondary_link: string }
 }
 
 const DEFAULT_CATEGORIES = ['Getting Started', 'Our Services', 'Process & Reporting', 'Pricing & Contracts', 'About Us']
 const merge = (s: Partial<FaqContent> | null): FaqContent => ({
   hero: { h1: 'Frequently Asked SEO Questions', subheadline: 'Everything you need to know about our data-driven search marketing methodology, deliverables, and retainers.', ...s?.hero },
   categories: s?.categories && s.categories.length > 0 ? s.categories : DEFAULT_CATEGORIES.map(name => ({ name, faqs: [] })),
-  cta_banner: { visible: true, headline: 'Have a Question Not Listed Here?', subheadline: 'Schedule a 15-minute consultation with our senior SEO architects to discuss your specific website needs.', button_text: 'Ask Our SEO Team', button_link: '/contact', ...s?.cta_banner },
+  cta_banner: {
+    visible: true,
+    badge: 'Zero Obligation · Custom Strategy',
+    headline: 'Have a Question Not Listed Here?',
+    subheadline: 'Schedule a 15-minute consultation with our senior SEO architects to discuss your specific website needs.',
+    button_text: 'Ask Our SEO Team',
+    button_link: '/contact',
+    secondary_text: '',
+    secondary_link: 'tel:+9714800736',
+    ...s?.cta_banner,
+  },
 })
 
 export default function FaqEditor() {
@@ -66,11 +76,16 @@ export default function FaqEditor() {
         </div>
 
         <AdminSectionCard title="CTA Banner" visible={c.cta_banner.visible} onVisibleChange={v => p.patch('cta_banner', { visible: v })}>
+          <AdminInput label="Badge" value={c.cta_banner.badge} onChange={e => p.patch('cta_banner', { badge: e.target.value })} />
           <AdminInput label="Headline" value={c.cta_banner.headline} onChange={e => p.patch('cta_banner', { headline: e.target.value })} />
           <AdminInput label="Subheadline" value={c.cta_banner.subheadline} onChange={e => p.patch('cta_banner', { subheadline: e.target.value })} />
           <div className="grid grid-cols-2 gap-3">
             <AdminInput label="Button Text" value={c.cta_banner.button_text} onChange={e => p.patch('cta_banner', { button_text: e.target.value })} />
             <AdminInput label="Button Link" value={c.cta_banner.button_link} onChange={e => p.patch('cta_banner', { button_link: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <AdminInput label="Secondary (Call) Button Text" hint="Leave blank to hide the button entirely." value={c.cta_banner.secondary_text} onChange={e => p.patch('cta_banner', { secondary_text: e.target.value })} />
+            <AdminInput label="Secondary Button Link" value={c.cta_banner.secondary_link} onChange={e => p.patch('cta_banner', { secondary_link: e.target.value })} />
           </div>
         </AdminSectionCard>
 
