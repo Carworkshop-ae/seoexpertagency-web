@@ -40,7 +40,7 @@ export default async function AboutPage() {
       />
       <PageHeader
         breadcrumb={[{ label: 'Home', href: '/' }, { label: 'About Us' }]}
-        eyebrow="OUR MISSION & PHILOSOPHY"
+        eyebrow={<EditableText path="hero.eyebrow" value={content.hero.eyebrow} as="span" />}
         title={<EditableText path="hero.h1" value={content.hero.h1} as="span" />}
         subtitle={<EditableText path="hero.subheadline" value={content.hero.subheadline} as="span" multiline />}
       />
@@ -73,10 +73,10 @@ export default async function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 max-w-2xl mx-auto">
             <span className="text-xs font-extrabold text-primary tracking-wider uppercase mb-2 inline-block">
-              OUR CORE VALUES
+              <EditableText path="pillars_section.eyebrow" value={content.pillars_section.eyebrow} as="span" />
             </span>
             <h2 className="display-tight text-balance text-2xl sm:text-3xl font-extrabold text-dark">
-              The Principles That Guide Every Campaign
+              <EditableText path="pillars_section.heading" value={content.pillars_section.heading} as="span" />
             </h2>
           </div>
 
@@ -114,7 +114,9 @@ export default async function AboutPage() {
 
       {/* Why Choose Us */}
       <WhyChooseUs
+        eyebrow={<EditableText path="why_choose_us.eyebrow" value={content.why_choose_us.eyebrow} as="span" />}
         heading={<EditableText path="why_choose_us.heading" value={content.why_choose_us.heading} as="span" />}
+        subtitle={<EditableText path="why_choose_us.subtitle" value={content.why_choose_us.subtitle} as="span" multiline />}
         items={content.why_choose_us.items.map((it, i) => ({
           icon: it.icon,
           title: <EditableText path={`why_choose_us.items.${i}.title`} value={it.title} as="span" />,
@@ -127,10 +129,14 @@ export default async function AboutPage() {
 
       {/* CTA */}
       <CTABanner
+        badge={<EditableText path="cta_banner.badge" value={content.cta_banner.badge} as="span" />}
         title={<EditableText path="cta_banner.headline" value={content.cta_banner.headline} as="span" />}
         subtitle={<EditableText path="cta_banner.subheadline" value={content.cta_banner.subheadline} as="span" multiline />}
         ctaLabel={content.cta_banner.button_text}
         ctaHref={content.cta_banner.button_link}
+        secondaryLabel={content.cta_banner.secondary_text}
+        secondaryPath="cta_banner.secondary_text"
+        secondaryHref={content.cta_banner.secondary_link}
       />
     </StaticPageEditProvider>
   )

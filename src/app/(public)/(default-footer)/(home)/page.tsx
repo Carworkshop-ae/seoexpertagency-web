@@ -133,7 +133,8 @@ export default async function HomePage() {
           subtitle={<EditableText path="cta_banner.subheadline" value={content.cta_banner.subheadline} as="span" multiline />}
           ctaLabel={<EditableText path="cta_banner.button_text" value={content.cta_banner.button_text} as="span" />}
           ctaHref={content.cta_banner.button_link}
-          secondaryLabel={<EditableText path="cta_banner.secondary_text" value={content.cta_banner.secondary_text} as="span" />}
+          secondaryLabel={content.cta_banner.secondary_text}
+          secondaryPath="cta_banner.secondary_text"
           secondaryHref={content.cta_banner.secondary_link}
         />
       </Reveal>
@@ -173,7 +174,9 @@ export default async function HomePage() {
       {/* 9. Why Choose Us */}
       <Reveal>
         <WhyChooseUs
+          eyebrow={<EditableText path="why_choose_us.eyebrow" value={content.why_choose_us.eyebrow} as="span" />}
           heading={<EditableText path="why_choose_us.heading" value={content.why_choose_us.heading} as="span" />}
+          subtitle={<EditableText path="why_choose_us.subtitle" value={content.why_choose_us.subtitle} as="span" multiline />}
           items={content.why_choose_us.items.map((it, i) => ({
             icon: <EditableText path={`why_choose_us.items.${i}.icon`} value={it.icon || '⭐'} as="span" />,
             title: <EditableText path={`why_choose_us.items.${i}.title`} value={it.title} as="span" />,
@@ -223,7 +226,8 @@ export default async function HomePage() {
       <Reveal>
         <FinalCTASection
           badge={<EditableText path="final_cta.badge" value={content.final_cta.badge} as="span" />}
-          phoneText={<EditableText path="final_cta.phone_text" value={content.final_cta.phone_text} as="span" />}
+          phoneText={content.final_cta.phone_text}
+          phonePath="final_cta.phone_text"
           phoneHref={content.final_cta.phone_link}
           heading={<EditableText path="final_cta.heading" value={content.final_cta.heading} as="span" />}
           subtitle={<EditableText path="final_cta.subtitle" value={content.final_cta.subtitle} as="span" multiline />}

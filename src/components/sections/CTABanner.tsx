@@ -1,6 +1,10 @@
+'use client'
+
 import type { ReactNode } from 'react'
 import { ArrowRight, Phone, Sparkles } from 'lucide-react'
 import { EditModeLink } from '@/components/inline-edit/EditModeLink'
+import { EditableText } from '@/components/inline-edit/EditableText'
+import { useAdminEdit } from '@/components/inline-edit/AdminEditProvider'
 
 interface CTABannerProps {
   badge?: ReactNode
@@ -8,7 +12,14 @@ interface CTABannerProps {
   subtitle?: ReactNode
   ctaLabel?: ReactNode
   ctaHref?: string
-  secondaryLabel?: ReactNode
+  /** Plain text, not a pre-wrapped EditableText — the button itself is
+   *  conditionally rendered based on this being non-blank, so the visibility
+   *  check needs the real string rather than an always-truthy React element
+   *  (an EditableText wrapping an empty value is still a truthy node).
+   *  Blank hides the button for visitors; an admin with edit mode on still
+   *  sees it (via secondaryPath) so they can type a label back in. */
+  secondaryLabel?: string
+  secondaryPath?: string
   secondaryHref?: string
   bgColor?: string
 }
@@ -20,9 +31,13 @@ export function CTABanner({
   ctaLabel = 'Get Your Free SEO Consultation',
   ctaHref = '/contact',
   secondaryLabel = 'Call Us Directly',
+  secondaryPath,
   secondaryHref = 'tel:+9714800736',
   bgColor,
 }: CTABannerProps) {
+  const { isAdmin, editMode } = useAdminEdit()
+  const showSecondary = Boolean(secondaryLabel) || (isAdmin && editMode)
+
   return (
     <section className="py-14 lg:py-20 px-4 sm:px-6 lg:px-8" aria-labelledby="cta-heading">
       <div
@@ -57,13 +72,13 @@ export function CTABanner({
               {ctaLabel}
               <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
             </EditModeLink>
-            {secondaryLabel && (
+            {showSecondary && (
               <EditModeLink
                 href={secondaryHref}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 text-white font-semibold ring-1 ring-white/30 hover:bg-white/20 backdrop-blur transition-all text-xs sm:text-sm"
               >
                 <Phone size={15} />
-                {secondaryLabel}
+                {secondaryPath ? <EditableText path={secondaryPath} value={secondaryLabel} as="span" /> : secondaryLabel}
               </EditModeLink>
             )}
           </div>

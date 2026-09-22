@@ -19,7 +19,7 @@ export interface HomeContent {
   trust_bar: { visible: boolean; stats: HomeStat[] }
   services: { visible: boolean; heading: string }
   how_it_works: { visible: boolean; heading: string; steps: HomeStep[] }
-  why_choose_us: { visible: boolean; heading: string; items: HomeUSP[] }
+  why_choose_us: { visible: boolean; eyebrow: string; heading: string; subtitle: string; items: HomeUSP[] }
   reviews: { visible: boolean; heading: string; reviews: HomeReview[] }
   blog_preview: { visible: boolean; heading: string; count: number }
   locations: { visible: boolean; heading: string }
@@ -54,7 +54,12 @@ export const HOME_DEFAULTS: HomeContent = {
     { icon: '🔧', title: 'Execution', description: 'Technical fixes, content production and authority building.' },
     { icon: '📈', title: 'Measure & Iterate', description: 'Monthly reporting against agreed KPIs, and refinement.' },
   ] },
-  why_choose_us: { visible: true, heading: 'Why Ambitious Brands Choose SEO Expert Agency', items: [
+  why_choose_us: {
+    visible: true,
+    eyebrow: 'THE SEO EXPERT DIFFERENCE',
+    heading: 'Why Ambitious Brands Choose SEO Expert Agency',
+    subtitle: 'We eliminate the guesswork from organic search marketing with transparent, data-driven frameworks engineered for measurable business ROI.',
+    items: [
     { icon: '🔓', title: 'No Hostile Lock-In Contracts', description: 'We earn your business every month through demonstrable organic traffic growth and revenue impact.' },
     { icon: '👥', title: 'Dedicated Senior Strategists', description: 'Work directly with seasoned SEO directors and technical architects, not entry-level account coordinators.' },
     { icon: '🛡️', title: '100% White-Hat Techniques', description: 'We adhere strictly to Google Webmaster Guidelines, ensuring penalty-proof rankings that stand the test of time.' },
@@ -136,23 +141,25 @@ export function mergeHomeContent(saved: Partial<HomeContent> | null | undefined)
 
 export interface AboutPillar { icon: string; title: string; description: string }
 export interface AboutContent {
-  hero: { h1: string; subheadline: string }
+  hero: { eyebrow: string; h1: string; subheadline: string }
   philosophy: { heading: string; intro_paragraph: string; tech_heading: string; tech_paragraph: string }
+  pillars_section: { eyebrow: string; heading: string }
   pillars: AboutPillar[]
   process_steps: { title: string; subtitle: string; eyebrow: string; steps: HomeStep[] }
-  why_choose_us: { visible: boolean; heading: string; items: HomeUSP[] }
+  why_choose_us: { visible: boolean; eyebrow: string; heading: string; subtitle: string; items: HomeUSP[] }
   faq: { visible: boolean; heading: string; faqs: HomeFAQ[] }
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string }
+  cta_banner: { visible: boolean; badge: string; headline: string; subheadline: string; button_text: string; button_link: string; secondary_text: string; secondary_link: string }
 }
 
 export const ABOUT_DEFAULTS: AboutContent = {
-  hero: { h1: 'Engineering Predictable Organic Search Growth', subheadline: 'We partner with ambitious enterprises and high-growth brands to transform search engines into their highest-ROI customer acquisition channel.' },
+  hero: { eyebrow: 'OUR MISSION & PHILOSOPHY', h1: 'Engineering Predictable Organic Search Growth', subheadline: 'We partner with ambitious enterprises and high-growth brands to transform search engines into their highest-ROI customer acquisition channel.' },
   philosophy: {
     heading: 'Moving Beyond Superficial SEO Metrics',
     intro_paragraph: 'Traditional search marketing agencies often drown clients in vanity reports filled with impression metrics and ranking spikes for irrelevant queries. At SEO Expert Agency, we founded our consultancy on a radically transparent premise: SEO only matters when it drives qualified pipeline, organic revenue, and measurable enterprise value.',
     tech_heading: 'Our Technical Engineering Standard',
     tech_paragraph: 'Modern search engines are sophisticated neural information retrieval systems. Winning competitive commercial queries requires full-stack technical excellence: lightning-fast Core Web Vitals, pristine semantic schema architectures, crawl-budget optimization for millions of URLs, and structured topical entity authority.',
   },
+  pillars_section: { eyebrow: 'OUR CORE VALUES', heading: 'The Principles That Guide Every Campaign' },
   pillars: [
     { icon: '📈', title: 'Data-Driven Engineering', description: 'We treat SEO as a technical engineering discipline. Every recommendation is anchored in log analysis, crawl diagnostics, and statistical keyword intent.' },
     { icon: '🛡️', title: '100% White-Hat Integrity', description: 'Zero shortcuts or private blog networks. We build durable search visibility through authentic digital PR, editorial relevance, and flawless technical hygiene.' },
@@ -160,9 +167,26 @@ export const ABOUT_DEFAULTS: AboutContent = {
     { icon: '👥', title: 'Senior Strategist Direct Access', description: 'Every client partners directly with seasoned SEO directors and technical leads who have hands-on experience scaling high-traffic enterprise architectures.' },
   ],
   process_steps: { ...HOME_DEFAULTS.process_steps },
-  why_choose_us: { visible: true, heading: 'Why Ambitious Brands Choose SEO Expert Agency', items: HOME_DEFAULTS.why_choose_us.items },
+  why_choose_us: {
+    visible: true,
+    eyebrow: HOME_DEFAULTS.why_choose_us.eyebrow,
+    heading: 'Why Ambitious Brands Choose SEO Expert Agency',
+    subtitle: HOME_DEFAULTS.why_choose_us.subtitle,
+    items: HOME_DEFAULTS.why_choose_us.items,
+  },
   faq: { visible: true, heading: 'Frequently Asked Questions', faqs: [] },
-  cta_banner: { visible: true, headline: 'Ready to Partner With an Engineering-Grade SEO Agency?', subheadline: 'Schedule a free technical diagnostic and strategy presentation with our senior directors.', button_text: 'Book Strategy Discovery', button_link: '/contact' },
+  cta_banner: {
+    visible: true,
+    badge: 'Zero Obligation · Custom Strategy',
+    headline: 'Ready to Partner With an Engineering-Grade SEO Agency?',
+    subheadline: 'Schedule a free technical diagnostic and strategy presentation with our senior directors.',
+    button_text: 'Book Strategy Discovery',
+    button_link: '/contact',
+    // Blank by default — the client asked for "Call Us Directly" gone from
+    // this page's CTA too (CTABanner already hides the button when blank).
+    secondary_text: '',
+    secondary_link: 'tel:+9714800736',
+  },
 }
 
 // `...c` is spread first so fields the admin dashboard's fuller AboutContent
@@ -174,6 +198,7 @@ export function mergeAboutContent(saved: Partial<AboutContent> | null | undefine
     ...c,
     hero: { ...ABOUT_DEFAULTS.hero, ...c.hero },
     philosophy: { ...ABOUT_DEFAULTS.philosophy, ...c.philosophy },
+    pillars_section: { ...ABOUT_DEFAULTS.pillars_section, ...c.pillars_section },
     pillars: c.pillars && c.pillars.length > 0 ? c.pillars : ABOUT_DEFAULTS.pillars,
     process_steps: { ...ABOUT_DEFAULTS.process_steps, ...c.process_steps },
     why_choose_us: { ...ABOUT_DEFAULTS.why_choose_us, ...c.why_choose_us },
