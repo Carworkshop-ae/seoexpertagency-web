@@ -208,24 +208,54 @@ export function mergeAboutContent(saved: Partial<AboutContent> | null | undefine
 }
 
 // ─── Contact page ────────────────────────────────────────────────────────────
-// Scoped to the hero only in this pass — the rest of the admin schema
-// (office details, map, form copy) doesn't yet match the live page's
-// hardcoded two-office layout, and reconciling those is a bigger content-model
-// change than a text-copy fix.
+// `details`/`form` mirror the shape the admin dashboard editor
+// (src/app/admin/pages/static/contact/page.tsx) has always managed — that
+// editor was reachable and already being used, but ContactForm.tsx (the
+// public page) never read any of it. `next_steps` is new — the "What Happens
+// After You Submit?" copy didn't exist in either schema before. Office layout
+// (Dubai/London, two addresses) stays hardcoded: `details.address` is a
+// single field, one step short of the live page's two-office block.
 
 export interface ContactContent {
   hero: { h1: string; subheadline: string }
+  details: { visible: boolean; phone: string; whatsapp: string; email: string; address: string; weekday_hours: string; weekend_hours: string }
+  form: { visible: boolean; heading: string; success_message: string }
+  next_steps: { heading: string; steps: string[] }
 }
 
 export const CONTACT_DEFAULTS: ContactContent = {
   hero: { h1: 'Get in Touch With Our SEO Strategists', subheadline: 'Request a comprehensive technical audit, discuss custom retainers, or explore strategic partnerships.' },
+  details: {
+    visible: true,
+    phone: '+971 4 800 736',
+    whatsapp: '',
+    email: 'hello@seoexpertsagency.ae',
+    address: 'Level 24, Boulevard Plaza Tower 1, Downtown Dubai, UAE',
+    weekday_hours: 'Monday – Friday: 9am – 6pm',
+    weekend_hours: 'Saturday – Sunday: Closed',
+  },
+  form: { visible: true, heading: 'Request a Custom SEO Proposal', success_message: "Thank you! We'll contact you within 24 hours." },
+  next_steps: {
+    heading: 'What Happens After You Submit?',
+    steps: [
+      'A Senior SEO Director reviews your website architecture and backlink profile.',
+      'We analyze competitor keyword gaps in your target commercial vertical.',
+      'We deliver a free 20-page audit and customized 12-month growth roadmap.',
+    ],
+  },
 }
 
-// `...c` preserves the admin dashboard's other Contact fields (details, maps,
-// form, faq) that this public-page schema doesn't render yet.
+// `...c` preserves the admin dashboard's other Contact fields (maps, faq)
+// that this public-page schema doesn't render yet.
 export function mergeContactContent(saved: Partial<ContactContent> | null | undefined): ContactContent {
   const c = saved ?? {}
-  return { ...c, hero: { ...CONTACT_DEFAULTS.hero, ...c.hero } }
+  return {
+    ...c,
+    hero: { ...CONTACT_DEFAULTS.hero, ...c.hero },
+    details: { ...CONTACT_DEFAULTS.details, ...c.details },
+    form: { ...CONTACT_DEFAULTS.form, ...c.form },
+    next_steps: c.next_steps && c.next_steps.steps?.length > 0 ? { ...CONTACT_DEFAULTS.next_steps, ...c.next_steps } : CONTACT_DEFAULTS.next_steps,
+  }
 }
 
 // ─── Privacy & Terms (shared shape, different content per slug) ─────────────

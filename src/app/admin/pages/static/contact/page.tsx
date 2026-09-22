@@ -2,9 +2,10 @@
 
 import { FAQRepeater } from '@/components/admin/FAQRepeater'
 import { useStaticPage } from '@/components/admin/useStaticPage'
-import { AdminInput, AdminSelect } from '@/components/admin/ui/AdminField'
+import { AdminInput, AdminSelect, AdminLabel } from '@/components/admin/ui/AdminField'
 import { AdminButton } from '@/components/admin/ui/AdminButton'
 import { AdminSectionCard } from '@/components/admin/ui/AdminSectionCard'
+import { Repeater, inputCls } from '@/components/admin/ui/Repeater'
 import { EditorChrome, StatusCard, SeoCard, InfoCard } from '@/components/admin/EditorChrome'
 import { StaticSeoCard } from '@/components/admin/StaticSeoCard'
 import { EditorSkeleton } from '@/components/admin/ui/EditorSkeleton'
@@ -15,6 +16,7 @@ interface ContactContent {
   details: { visible: boolean; phone: string; whatsapp: string; email: string; address: string; weekday_hours: string; weekend_hours: string }
   maps: { visible: boolean; embed_url: string; height: string }
   form: { visible: boolean; heading: string; success_message: string; show_service: boolean }
+  next_steps: { heading: string; steps: string[] }
   faq: { visible: boolean; heading: string; faqs: FAQ[] }
 }
 
@@ -23,6 +25,15 @@ const merge = (s: Partial<ContactContent> | null): ContactContent => ({
   details: { visible: true, phone: '', whatsapp: '', email: 'info@seoexpertsagency.ae', address: '', weekday_hours: 'Monday – Friday: 9am – 6pm', weekend_hours: 'Saturday – Sunday: Closed', ...s?.details },
   maps: { visible: true, embed_url: '', height: '400px', ...s?.maps },
   form: { visible: true, heading: 'Send Us a Message', success_message: "Thank you! We'll contact you within 24 hours.", show_service: true, ...s?.form },
+  next_steps: {
+    heading: 'What Happens After You Submit?',
+    steps: [
+      'A Senior SEO Director reviews your website architecture and backlink profile.',
+      'We analyze competitor keyword gaps in your target commercial vertical.',
+      'We deliver a free 20-page audit and customized 12-month growth roadmap.',
+    ],
+    ...s?.next_steps,
+  },
   faq: { visible: true, heading: 'Common Questions', faqs: [], ...s?.faq },
 })
 
@@ -73,6 +84,18 @@ export default function ContactEditor() {
           <AdminInput label="Success Message" value={c.form.success_message} onChange={e => p.patch('form', { success_message: e.target.value })} />
           <div className="flex flex-wrap gap-4 pt-1">
             <Toggle label="Show service dropdown" checked={c.form.show_service} onChange={v => p.patch('form', { show_service: v })} />
+          </div>
+        </AdminSectionCard>
+
+        <AdminSectionCard title="What Happens After You Submit?">
+          <AdminInput label="Section Heading" value={c.next_steps.heading} onChange={e => p.patch('next_steps', { heading: e.target.value })} />
+          <div>
+            <AdminLabel>Steps</AdminLabel>
+            <Repeater<string> items={c.next_steps.steps} max={6} addLabel="+ Add Step"
+              onChange={steps => p.patch('next_steps', { steps })} blank=""
+              render={(it, upd) => (
+                <textarea value={it} onChange={e => upd(e.target.value)} rows={2} className={`${inputCls} flex-1`} />
+              )} />
           </div>
         </AdminSectionCard>
 
