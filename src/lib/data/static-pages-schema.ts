@@ -229,7 +229,7 @@ export const CONTACT_DEFAULTS: ContactContent = {
     visible: true,
     phone: '+971 4 800 736',
     whatsapp: '',
-    email: 'hello@seoexpertsagency.com',
+    email: 'hello@seoexpertsagency.ae',
     address: 'Level 24, Boulevard Plaza Tower 1, Downtown Dubai, UAE',
     // Matches the page's original hardcoded "Working Hours" line exactly —
     // the admin editor's own default text differs slightly ("Monday –
