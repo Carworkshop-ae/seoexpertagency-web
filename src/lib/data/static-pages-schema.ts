@@ -19,7 +19,7 @@ export interface HomeContent {
   trust_bar: { visible: boolean; stats: HomeStat[] }
   services: { visible: boolean; heading: string }
   how_it_works: { visible: boolean; heading: string; steps: HomeStep[] }
-  why_choose_us: { visible: boolean; heading: string; items: HomeUSP[] }
+  why_choose_us: { visible: boolean; eyebrow: string; heading: string; subtitle: string; items: HomeUSP[] }
   reviews: { visible: boolean; heading: string; reviews: HomeReview[] }
   blog_preview: { visible: boolean; heading: string; count: number }
   locations: { visible: boolean; heading: string }
@@ -54,7 +54,12 @@ export const HOME_DEFAULTS: HomeContent = {
     { icon: '🔧', title: 'Execution', description: 'Technical fixes, content production and authority building.' },
     { icon: '📈', title: 'Measure & Iterate', description: 'Monthly reporting against agreed KPIs, and refinement.' },
   ] },
-  why_choose_us: { visible: true, heading: 'Why Ambitious Brands Choose SEO Expert Agency', items: [
+  why_choose_us: {
+    visible: true,
+    eyebrow: 'THE SEO EXPERT DIFFERENCE',
+    heading: 'Why Ambitious Brands Choose SEO Expert Agency',
+    subtitle: 'We eliminate the guesswork from organic search marketing with transparent, data-driven frameworks engineered for measurable business ROI.',
+    items: [
     { icon: '🔓', title: 'No Hostile Lock-In Contracts', description: 'We earn your business every month through demonstrable organic traffic growth and revenue impact.' },
     { icon: '👥', title: 'Dedicated Senior Strategists', description: 'Work directly with seasoned SEO directors and technical architects, not entry-level account coordinators.' },
     { icon: '🛡️', title: '100% White-Hat Techniques', description: 'We adhere strictly to Google Webmaster Guidelines, ensuring penalty-proof rankings that stand the test of time.' },
@@ -93,7 +98,10 @@ export const HOME_DEFAULTS: HomeContent = {
     heading: "Let's Build Your Search Growth Strategy",
     subtitle: 'Get in touch today for an in-depth competitive search audit, technical roadmap, and predictable organic growth plan.',
     cta_text: 'Book a Free Consultation',
-    phone_text: 'Call +971 4 800 736',
+    // Blank by default — the client asked for "Call Us Directly" gone from
+    // the homepage's final CTA. FinalCTASection now hides the button when
+    // this is empty; an admin can bring it back by typing a label in.
+    phone_text: '',
     phone_link: 'tel:+9714800736',
   },
   services_section: { title: 'Our Core SEO Services', subtitle: 'Data-backed search optimization strategies engineered to scale high-intent traffic, dominate keywords, and grow organic revenue.', eyebrow: 'WHAT WE DELIVER' },
@@ -133,23 +141,25 @@ export function mergeHomeContent(saved: Partial<HomeContent> | null | undefined)
 
 export interface AboutPillar { icon: string; title: string; description: string }
 export interface AboutContent {
-  hero: { h1: string; subheadline: string }
+  hero: { eyebrow: string; h1: string; subheadline: string }
   philosophy: { heading: string; intro_paragraph: string; tech_heading: string; tech_paragraph: string }
+  pillars_section: { eyebrow: string; heading: string }
   pillars: AboutPillar[]
   process_steps: { title: string; subtitle: string; eyebrow: string; steps: HomeStep[] }
-  why_choose_us: { visible: boolean; heading: string; items: HomeUSP[] }
+  why_choose_us: { visible: boolean; eyebrow: string; heading: string; subtitle: string; items: HomeUSP[] }
   faq: { visible: boolean; heading: string; faqs: HomeFAQ[] }
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string }
+  cta_banner: { visible: boolean; badge: string; headline: string; subheadline: string; button_text: string; button_link: string; secondary_text: string; secondary_link: string }
 }
 
 export const ABOUT_DEFAULTS: AboutContent = {
-  hero: { h1: 'Engineering Predictable Organic Search Growth', subheadline: 'We partner with ambitious enterprises and high-growth brands to transform search engines into their highest-ROI customer acquisition channel.' },
+  hero: { eyebrow: 'OUR MISSION & PHILOSOPHY', h1: 'Engineering Predictable Organic Search Growth', subheadline: 'We partner with ambitious enterprises and high-growth brands to transform search engines into their highest-ROI customer acquisition channel.' },
   philosophy: {
     heading: 'Moving Beyond Superficial SEO Metrics',
     intro_paragraph: 'Traditional search marketing agencies often drown clients in vanity reports filled with impression metrics and ranking spikes for irrelevant queries. At SEO Expert Agency, we founded our consultancy on a radically transparent premise: SEO only matters when it drives qualified pipeline, organic revenue, and measurable enterprise value.',
     tech_heading: 'Our Technical Engineering Standard',
     tech_paragraph: 'Modern search engines are sophisticated neural information retrieval systems. Winning competitive commercial queries requires full-stack technical excellence: lightning-fast Core Web Vitals, pristine semantic schema architectures, crawl-budget optimization for millions of URLs, and structured topical entity authority.',
   },
+  pillars_section: { eyebrow: 'OUR CORE VALUES', heading: 'The Principles That Guide Every Campaign' },
   pillars: [
     { icon: '📈', title: 'Data-Driven Engineering', description: 'We treat SEO as a technical engineering discipline. Every recommendation is anchored in log analysis, crawl diagnostics, and statistical keyword intent.' },
     { icon: '🛡️', title: '100% White-Hat Integrity', description: 'Zero shortcuts or private blog networks. We build durable search visibility through authentic digital PR, editorial relevance, and flawless technical hygiene.' },
@@ -157,9 +167,26 @@ export const ABOUT_DEFAULTS: AboutContent = {
     { icon: '👥', title: 'Senior Strategist Direct Access', description: 'Every client partners directly with seasoned SEO directors and technical leads who have hands-on experience scaling high-traffic enterprise architectures.' },
   ],
   process_steps: { ...HOME_DEFAULTS.process_steps },
-  why_choose_us: { visible: true, heading: 'Why Ambitious Brands Choose SEO Expert Agency', items: HOME_DEFAULTS.why_choose_us.items },
+  why_choose_us: {
+    visible: true,
+    eyebrow: HOME_DEFAULTS.why_choose_us.eyebrow,
+    heading: 'Why Ambitious Brands Choose SEO Expert Agency',
+    subtitle: HOME_DEFAULTS.why_choose_us.subtitle,
+    items: HOME_DEFAULTS.why_choose_us.items,
+  },
   faq: { visible: true, heading: 'Frequently Asked Questions', faqs: [] },
-  cta_banner: { visible: true, headline: 'Ready to Partner With an Engineering-Grade SEO Agency?', subheadline: 'Schedule a free technical diagnostic and strategy presentation with our senior directors.', button_text: 'Book Strategy Discovery', button_link: '/contact' },
+  cta_banner: {
+    visible: true,
+    badge: 'Zero Obligation · Custom Strategy',
+    headline: 'Ready to Partner With an Engineering-Grade SEO Agency?',
+    subheadline: 'Schedule a free technical diagnostic and strategy presentation with our senior directors.',
+    button_text: 'Book Strategy Discovery',
+    button_link: '/contact',
+    // Blank by default — the client asked for "Call Us Directly" gone from
+    // this page's CTA too (CTABanner already hides the button when blank).
+    secondary_text: '',
+    secondary_link: 'tel:+9714800736',
+  },
 }
 
 // `...c` is spread first so fields the admin dashboard's fuller AboutContent
@@ -171,6 +198,7 @@ export function mergeAboutContent(saved: Partial<AboutContent> | null | undefine
     ...c,
     hero: { ...ABOUT_DEFAULTS.hero, ...c.hero },
     philosophy: { ...ABOUT_DEFAULTS.philosophy, ...c.philosophy },
+    pillars_section: { ...ABOUT_DEFAULTS.pillars_section, ...c.pillars_section },
     pillars: c.pillars && c.pillars.length > 0 ? c.pillars : ABOUT_DEFAULTS.pillars,
     process_steps: { ...ABOUT_DEFAULTS.process_steps, ...c.process_steps },
     why_choose_us: { ...ABOUT_DEFAULTS.why_choose_us, ...c.why_choose_us },
@@ -180,24 +208,58 @@ export function mergeAboutContent(saved: Partial<AboutContent> | null | undefine
 }
 
 // ─── Contact page ────────────────────────────────────────────────────────────
-// Scoped to the hero only in this pass — the rest of the admin schema
-// (office details, map, form copy) doesn't yet match the live page's
-// hardcoded two-office layout, and reconciling those is a bigger content-model
-// change than a text-copy fix.
+// `details`/`form` mirror the shape the admin dashboard editor
+// (src/app/admin/pages/static/contact/page.tsx) has always managed — that
+// editor was reachable and already being used, but ContactForm.tsx (the
+// public page) never read any of it. `next_steps` is new — the "What Happens
+// After You Submit?" copy didn't exist in either schema before. Office layout
+// (Dubai/London, two addresses) stays hardcoded: `details.address` is a
+// single field, one step short of the live page's two-office block.
 
 export interface ContactContent {
   hero: { h1: string; subheadline: string }
+  details: { visible: boolean; phone: string; whatsapp: string; email: string; address: string; weekday_hours: string; weekend_hours: string }
+  form: { visible: boolean; heading: string; success_message: string }
+  next_steps: { heading: string; steps: string[] }
 }
 
 export const CONTACT_DEFAULTS: ContactContent = {
   hero: { h1: 'Get in Touch With Our SEO Strategists', subheadline: 'Request a comprehensive technical audit, discuss custom retainers, or explore strategic partnerships.' },
+  details: {
+    visible: true,
+    phone: '+971 4 800 736',
+    whatsapp: '',
+    email: 'hello@seoexpertsagency.ae',
+    address: 'Level 24, Boulevard Plaza Tower 1, Downtown Dubai, UAE',
+    // Matches the page's original hardcoded "Working Hours" line exactly —
+    // the admin editor's own default text differs slightly ("Monday –
+    // Friday: 9am – 6pm"), but that field was never rendered anywhere until
+    // now, so this schema's default is what must match the live page.
+    weekday_hours: 'Mon – Fri: 9:00 AM – 6:00 PM (GST / GMT)',
+    weekend_hours: 'Saturday – Sunday: Closed',
+  },
+  form: { visible: true, heading: 'Request a Custom SEO Proposal', success_message: "Thank you! We'll contact you within 24 hours." },
+  next_steps: {
+    heading: 'What Happens After You Submit?',
+    steps: [
+      'A Senior SEO Director reviews your website architecture and backlink profile.',
+      'We analyze competitor keyword gaps in your target commercial vertical.',
+      'We deliver a free 20-page audit and customized 12-month growth roadmap.',
+    ],
+  },
 }
 
-// `...c` preserves the admin dashboard's other Contact fields (details, maps,
-// form, faq) that this public-page schema doesn't render yet.
+// `...c` preserves the admin dashboard's other Contact fields (maps, faq)
+// that this public-page schema doesn't render yet.
 export function mergeContactContent(saved: Partial<ContactContent> | null | undefined): ContactContent {
   const c = saved ?? {}
-  return { ...c, hero: { ...CONTACT_DEFAULTS.hero, ...c.hero } }
+  return {
+    ...c,
+    hero: { ...CONTACT_DEFAULTS.hero, ...c.hero },
+    details: { ...CONTACT_DEFAULTS.details, ...c.details },
+    form: { ...CONTACT_DEFAULTS.form, ...c.form },
+    next_steps: c.next_steps && c.next_steps.steps?.length > 0 ? { ...CONTACT_DEFAULTS.next_steps, ...c.next_steps } : CONTACT_DEFAULTS.next_steps,
+  }
 }
 
 // ─── Privacy & Terms (shared shape, different content per slug) ─────────────
@@ -254,28 +316,44 @@ export function mergePolicyContent(defaults: PolicyContent, saved: Partial<Polic
 }
 
 // ─── FAQ page ────────────────────────────────────────────────────────────────
-// Scoped to the hero and CTA banner in this pass — the admin editor's
-// category-grouped FAQ list doesn't yet match the live page's flat extended
-// list (HOMEPAGE_FAQS + a few FAQ-page-only questions); reconciling those is
-// left for a follow-up.
+// `categories` matches the admin editor's shape exactly (src/app/admin/pages/
+// static/faq/page.tsx) — that editor was reachable and already writing this
+// field, but the public page rendered a hardcoded EXTENDED_FAQS list instead
+// of reading it back. Empty by default so the public accordion keeps showing
+// EXTENDED_FAQS until an admin actually adds a question in the dashboard —
+// nothing changes visually until edited (the public page checks total
+// question count across categories, not category count, since the admin
+// editor pre-seeds category names before any questions exist in them).
 
+export interface FaqPageCategory { name: string; faqs: HomeFAQ[] }
 export interface FaqPageContent {
   hero: { h1: string; subheadline: string }
-  cta_banner: { visible: boolean; headline: string; subheadline: string; button_text: string; button_link: string }
+  categories: FaqPageCategory[]
+  cta_banner: { visible: boolean; badge: string; headline: string; subheadline: string; button_text: string; button_link: string; secondary_text: string; secondary_link: string }
 }
 
 export const FAQ_PAGE_DEFAULTS: FaqPageContent = {
   hero: { h1: 'Frequently Asked SEO Questions', subheadline: 'Everything you need to know about our data-driven search marketing methodology, deliverables, and retainers.' },
-  cta_banner: { visible: true, headline: 'Have a Question Not Listed Here?', subheadline: 'Schedule a 15-minute consultation with our senior SEO architects to discuss your specific website needs.', button_text: 'Ask Our SEO Team', button_link: '/contact' },
+  categories: [],
+  cta_banner: {
+    visible: true,
+    badge: 'Zero Obligation · Custom Strategy',
+    headline: 'Have a Question Not Listed Here?',
+    subheadline: 'Schedule a 15-minute consultation with our senior SEO architects to discuss your specific website needs.',
+    button_text: 'Ask Our SEO Team',
+    button_link: '/contact',
+    // Blank by default — same "remove Call Us Directly" request as Home/About.
+    secondary_text: '',
+    secondary_link: 'tel:+9714800736',
+  },
 }
 
-// `...c` preserves the admin dashboard's `categories` field (this public-page
-// schema doesn't render it yet — see note above) across an inline save.
 export function mergeFaqPageContent(saved: Partial<FaqPageContent> | null | undefined): FaqPageContent {
   const c = saved ?? {}
   return {
     ...c,
     hero: { ...FAQ_PAGE_DEFAULTS.hero, ...c.hero },
+    categories: c.categories ?? FAQ_PAGE_DEFAULTS.categories,
     cta_banner: { ...FAQ_PAGE_DEFAULTS.cta_banner, ...c.cta_banner },
   }
 }

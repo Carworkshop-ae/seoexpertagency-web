@@ -1,10 +1,17 @@
+'use client'
+
 import type { ReactNode } from 'react'
 import { ArrowRight, Phone, Sparkles } from 'lucide-react'
 import { EditModeLink } from '@/components/inline-edit/EditModeLink'
+import { EditableText } from '@/components/inline-edit/EditableText'
+import { useAdminEdit } from '@/components/inline-edit/AdminEditProvider'
 
 interface FinalCTASectionProps {
   badge?: ReactNode
-  phoneText?: ReactNode
+  /** Plain text, not a pre-wrapped EditableText — see CTABanner's
+   *  secondaryLabel for why the visibility check needs the real string. */
+  phoneText?: string
+  phonePath?: string
   phoneHref?: string
   heading?: ReactNode
   subtitle?: ReactNode
@@ -15,12 +22,16 @@ interface FinalCTASectionProps {
 export function FinalCTASection({
   badge = 'Scale Your Organic Revenue',
   phoneText = 'Call +971 4 800 736',
+  phonePath,
   phoneHref = 'tel:+9714800736',
   heading = "Let's Build Your Search Growth Strategy",
   subtitle = 'Get in touch today for an in-depth competitive search audit, technical roadmap, and predictable organic growth plan.',
   ctaText = 'Book a Free Consultation',
   ctaHref = '/contact',
 }: FinalCTASectionProps) {
+  const { isAdmin, editMode } = useAdminEdit()
+  const showPhone = Boolean(phoneText) || (isAdmin && editMode)
+
   return (
     <section className="py-16 lg:py-24 bg-mesh border-t border-slate-100 relative overflow-hidden" aria-labelledby="final-cta-heading">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -46,13 +57,15 @@ export function FinalCTASection({
             <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
           </EditModeLink>
 
-          <EditModeLink
-            href={phoneHref}
-            className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm transition-all"
-          >
-            <Phone size={15} className="text-primary" />
-            {phoneText}
-          </EditModeLink>
+          {showPhone && (
+            <EditModeLink
+              href={phoneHref}
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm transition-all"
+            >
+              <Phone size={15} className="text-primary" />
+              {phonePath ? <EditableText path={phonePath} value={phoneText} as="span" /> : phoneText}
+            </EditModeLink>
+          )}
         </div>
       </div>
     </section>

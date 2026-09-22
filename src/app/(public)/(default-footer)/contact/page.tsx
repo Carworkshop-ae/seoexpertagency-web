@@ -35,6 +35,17 @@ export default async function ContactPage() {
         services={services}
         heroH1={<EditableText path="hero.h1" value={content.hero.h1} as="span" />}
         heroSubtitle={<EditableText path="hero.subheadline" value={content.hero.subheadline} as="span" multiline />}
+        formHeading={<EditableText path="form.heading" value={content.form.heading} as="span" />}
+        successMessage={<EditableText path="form.success_message" value={content.form.success_message} as="span" multiline />}
+        contactPhone={<EditableText path="details.phone" value={content.details.phone} as="span" />}
+        contactPhoneHref={`tel:${content.details.phone.replace(/[^0-9+]/g, '')}`}
+        contactEmail={<EditableText path="details.email" value={content.details.email} as="span" />}
+        contactEmailHref={`mailto:${content.details.email}`}
+        workingHours={<EditableText path="details.weekday_hours" value={content.details.weekday_hours} as="span" />}
+        nextStepsHeading={<EditableText path="next_steps.heading" value={content.next_steps.heading} as="span" />}
+        nextSteps={content.next_steps.steps.map((step, i) => (
+          <EditableText key={i} path={`next_steps.steps.${i}`} value={step} as="span" multiline />
+        ))}
       />
       <FAQSection />
     </StaticPageEditProvider>

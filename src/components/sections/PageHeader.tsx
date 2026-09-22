@@ -8,7 +8,7 @@ interface PageHeaderProps {
   title: ReactNode
   subtitle?: ReactNode
   showTrust?: boolean
-  eyebrow?: string
+  eyebrow?: ReactNode
 }
 
 const SEO_TRUST = [

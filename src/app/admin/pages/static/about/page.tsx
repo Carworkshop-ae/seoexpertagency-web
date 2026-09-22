@@ -59,6 +59,7 @@ export default function AboutEditor() {
     >
       <div className="space-y-4">
         <AdminSectionCard title="Hero">
+          <AdminInput label="Eyebrow Badge" value={c.hero.eyebrow} onChange={e => p.patch('hero', { eyebrow: e.target.value })} />
           <AdminInput label="H1 Heading" required maxCount={60} value={c.hero.h1} onChange={e => p.patch('hero', { h1: e.target.value })} />
           <AdminInput label="Subheadline" value={c.hero.subheadline} onChange={e => p.patch('hero', { subheadline: e.target.value })} />
           <MediaPicker label="Hero Image" value={c.hero.image_url} onChange={v => p.patch('hero', { image_url: v })} />
@@ -72,6 +73,8 @@ export default function AboutEditor() {
         </AdminSectionCard>
 
         <AdminSectionCard title="Core Pillars">
+          <AdminInput label="Section Eyebrow" value={c.pillars_section.eyebrow} onChange={e => p.patch('pillars_section', { eyebrow: e.target.value })} />
+          <AdminInput label="Section Heading" value={c.pillars_section.heading} onChange={e => p.patch('pillars_section', { heading: e.target.value })} />
           <Repeater<AboutPillar> items={c.pillars} max={6} addLabel="+ Add Pillar" onChange={pillars => p.setContent(prev => ({ ...prev, pillars }))} blank={{ icon: '⭐', title: '', description: '' }}
             render={(it, upd) => (
               <div className="grid grid-cols-[3rem_1fr] gap-2 flex-1">
@@ -114,7 +117,9 @@ export default function AboutEditor() {
         </AdminSectionCard>
 
         <AdminSectionCard title="Why Choose Us" visible={c.why_choose_us.visible} onVisibleChange={v => p.patch('why_choose_us', { visible: v })}>
+          <AdminInput label="Section Eyebrow" value={c.why_choose_us.eyebrow} onChange={e => p.patch('why_choose_us', { eyebrow: e.target.value })} />
           <AdminInput label="Section Heading" value={c.why_choose_us.heading} onChange={e => p.patch('why_choose_us', { heading: e.target.value })} />
+          <div><AdminLabel>Section Subtitle</AdminLabel><textarea value={c.why_choose_us.subtitle} onChange={e => p.patch('why_choose_us', { subtitle: e.target.value })} rows={2} className={inputCls} /></div>
           <Repeater<HomeUSP> items={c.why_choose_us.items} max={6} addLabel="+ Add Reason" onChange={items => p.patch('why_choose_us', { items })} blank={{ icon: '✅', title: '', description: '' }}
             render={(it, upd) => (
               <div className="grid grid-cols-[3rem_1fr] gap-2 flex-1">
@@ -133,11 +138,16 @@ export default function AboutEditor() {
         </AdminSectionCard>
 
         <AdminSectionCard title="CTA Banner" visible={c.cta_banner.visible} onVisibleChange={v => p.patch('cta_banner', { visible: v })}>
+          <AdminInput label="Badge" value={c.cta_banner.badge} onChange={e => p.patch('cta_banner', { badge: e.target.value })} />
           <AdminInput label="Headline" value={c.cta_banner.headline} onChange={e => p.patch('cta_banner', { headline: e.target.value })} />
           <AdminInput label="Subheadline" value={c.cta_banner.subheadline} onChange={e => p.patch('cta_banner', { subheadline: e.target.value })} />
           <div className="grid grid-cols-2 gap-3">
             <AdminInput label="Button Text" value={c.cta_banner.button_text} onChange={e => p.patch('cta_banner', { button_text: e.target.value })} />
             <AdminInput label="Button Link" value={c.cta_banner.button_link} onChange={e => p.patch('cta_banner', { button_link: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <AdminInput label="Secondary (Call) Button Text" hint="Leave blank to hide the button entirely." value={c.cta_banner.secondary_text} onChange={e => p.patch('cta_banner', { secondary_text: e.target.value })} />
+            <AdminInput label="Secondary Button Link" value={c.cta_banner.secondary_link} onChange={e => p.patch('cta_banner', { secondary_link: e.target.value })} />
           </div>
         </AdminSectionCard>
 

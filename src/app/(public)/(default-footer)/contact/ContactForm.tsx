@@ -14,12 +14,38 @@ interface ContactFormProps {
   services?: ServiceOption[]
   heroH1?: ReactNode
   heroSubtitle?: ReactNode
+  formHeading?: ReactNode
+  successMessage?: ReactNode
+  contactPhone?: ReactNode
+  contactPhoneHref?: string
+  contactEmail?: ReactNode
+  contactEmailHref?: string
+  workingHours?: ReactNode
+  nextStepsHeading?: ReactNode
+  nextSteps?: ReactNode[]
 }
 
+// The office addresses (Dubai HQ / London Hub) stay hardcoded — the admin
+// schema's `details.address` is a single field, one step short of this
+// page's two-office layout. Everything else the dashboard already manages
+// (phone, email, hours, form heading, "what happens next") is wired below.
 export function ContactForm({
   services,
   heroH1 = 'Get in Touch With Our SEO Strategists',
   heroSubtitle = 'Request a comprehensive technical audit, discuss custom retainers, or explore strategic partnerships.',
+  formHeading = 'Request a Custom SEO Proposal',
+  successMessage = "Thank you! We'll contact you within 24 hours.",
+  contactPhone = '+971 4 800 736',
+  contactPhoneHref = 'tel:+9714800736',
+  contactEmail = 'hello@seoexpertsagency.ae',
+  contactEmailHref = 'mailto:hello@seoexpertsagency.ae',
+  workingHours = 'Mon – Fri: 9:00 AM – 6:00 PM (GST / GMT)',
+  nextStepsHeading = 'What Happens After You Submit?',
+  nextSteps = [
+    'A Senior SEO Director reviews your website architecture and backlink profile.',
+    'We analyze competitor keyword gaps in your target commercial vertical.',
+    'We deliver a free 20-page audit and customized 12-month growth roadmap.',
+  ],
 }: ContactFormProps) {
   const serviceOptions: ServiceOption[] = services ?? SEO_SERVICES
   const [name, setName] = useState('')
@@ -98,8 +124,7 @@ export function ContactForm({
                   Thank You, {name}!
                 </h3>
                 <p className="text-sm text-slate-600 mb-6 leading-relaxed max-w-md mx-auto">
-                  Our SEO directors have received your inquiry for{' '}
-                  <span className="font-semibold text-primary">{websiteUrl || 'your website'}</span>. We will review your search landscape and respond within 24 business hours.
+                  {successMessage}
                 </p>
                 <button
                   onClick={() => {
@@ -121,7 +146,7 @@ export function ContactForm({
                 className="card-premium p-8 rounded-3xl bg-white border border-slate-200/90 shadow-xl"
               >
                 <h2 className="text-xl font-extrabold text-dark mb-1">
-                  Request a Custom SEO Proposal
+                  {formHeading}
                 </h2>
                 <p className="text-xs text-slate-500 mb-6">
                   Fill in your website details below to receive a free organic traffic gap analysis.
@@ -288,8 +313,8 @@ export function ContactForm({
                   <Phone size={18} className="text-primary shrink-0" />
                   <div>
                     <p className="text-xs text-slate-400">Direct Consultation Line</p>
-                    <a href="tel:+9714800736" className="text-sm font-bold text-white hover:text-primary transition-colors">
-                      +971 4 800 736
+                    <a href={contactPhoneHref} className="text-sm font-bold text-white hover:text-primary transition-colors">
+                      {contactPhone}
                     </a>
                   </div>
                 </div>
@@ -298,8 +323,8 @@ export function ContactForm({
                   <Mail size={18} className="text-primary shrink-0" />
                   <div>
                     <p className="text-xs text-slate-400">Email Address</p>
-                    <a href="mailto:hello@seoexpertsagency.ae" className="text-sm font-bold text-white hover:text-primary transition-colors">
-                      hello@seoexpertsagency.ae
+                    <a href={contactEmailHref} className="text-sm font-bold text-white hover:text-primary transition-colors">
+                      {contactEmail}
                     </a>
                   </div>
                 </div>
@@ -309,7 +334,7 @@ export function ContactForm({
                   <div>
                     <p className="text-xs text-slate-400">Working Hours</p>
                     <p className="text-xs font-semibold text-slate-200">
-                      Mon – Fri: 9:00 AM – 6:00 PM (GST / GMT)
+                      {workingHours}
                     </p>
                   </div>
                 </div>
@@ -317,11 +342,9 @@ export function ContactForm({
             </div>
 
             <div className="card-premium p-6 rounded-2xl bg-white border border-slate-200/80">
-              <h4 className="font-bold text-sm text-dark mb-2">What Happens After You Submit?</h4>
+              <h4 className="font-bold text-sm text-dark mb-2">{nextStepsHeading}</h4>
               <ol className="text-xs text-slate-600 space-y-2 list-decimal list-inside leading-relaxed">
-                <li>A Senior SEO Director reviews your website architecture and backlink profile.</li>
-                <li>We analyze competitor keyword gaps in your target commercial vertical.</li>
-                <li>We deliver a free 20-page audit and customized 12-month growth roadmap.</li>
+                {nextSteps.map((step, i) => <li key={i}>{step}</li>)}
               </ol>
             </div>
           </div>

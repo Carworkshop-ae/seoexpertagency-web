@@ -37,10 +37,19 @@ const EXTENDED_FAQS = [
 export default async function FAQPage() {
   const content = await getFaqPageContent()
 
+  // Editing a category in Dashboard -> Static Pages -> FAQ now changes what
+  // shows here; EXTENDED_FAQS remains the fallback so an unedited install
+  // (or one where the admin has only added empty category names so far)
+  // looks exactly as it did before. Checked on actual question count, not
+  // category count — the admin editor pre-seeds 5 named-but-empty categories
+  // by default, so `categories.length > 0` alone would go live blank.
+  const editedFaqs = content.categories.flatMap(cat => cat.faqs.map(f => ({ question: f.q, answer: f.a })))
+  const faqs = editedFaqs.length > 0 ? editedFaqs : EXTENDED_FAQS
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: EXTENDED_FAQS.map(f => ({
+    mainEntity: faqs.map(f => ({
       '@type': 'Question',
       name: f.question,
       acceptedAnswer: {
@@ -64,14 +73,18 @@ export default async function FAQPage() {
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
-        <Accordion items={EXTENDED_FAQS} />
+        <Accordion items={faqs} />
       </div>
 
       <CTABanner
+        badge={<EditableText path="cta_banner.badge" value={content.cta_banner.badge} as="span" />}
         title={<EditableText path="cta_banner.headline" value={content.cta_banner.headline} as="span" />}
         subtitle={<EditableText path="cta_banner.subheadline" value={content.cta_banner.subheadline} as="span" multiline />}
         ctaLabel={content.cta_banner.button_text}
         ctaHref={content.cta_banner.button_link}
+        secondaryLabel={content.cta_banner.secondary_text}
+        secondaryPath="cta_banner.secondary_text"
+        secondaryHref={content.cta_banner.secondary_link}
       />
     </StaticPageEditProvider>
   )

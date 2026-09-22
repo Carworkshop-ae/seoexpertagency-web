@@ -72,6 +72,13 @@ export interface SiteSettings {
   footer_show_locations_column: boolean
   footer_column1_title: string
   footer_column2_title: string
+  /** Heading over the address/phone/email block — kept separate from
+   *  footer_column2_title (default 'Core Services') because that key's
+   *  existing default doesn't match what's actually rendered there. */
+  footer_contact_heading: string
+  footer_cta_label: string
+  footer_cta_heading: string
+  footer_cta_button_text: string
   footer_column3_title: string
   footer_column4_title: string
   footer_custom_links: FooterLink[]
@@ -205,6 +212,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   footer_show_locations_column: true,
   footer_column1_title: 'Company',
   footer_column2_title: 'Core Services',
+  footer_contact_heading: 'Contact & HQ',
+  footer_cta_label: 'Ready to grow?',
+  footer_cta_heading: 'Get your free custom SEO strategy audit',
+  footer_cta_button_text: 'Request Free Audit',
   footer_column3_title: 'Industries We Serve',
   footer_column4_title: 'Locations',
   footer_custom_links: [
@@ -285,6 +296,7 @@ export const PUBLIC_SETTING_KEYS: Array<keyof SiteSettings> = [
   'footer_logo_url', 'footer_background_color', 'footer_text_color', 'footer_copyright_text', 'footer_tagline',
   'footer_show_services_column', 'footer_show_brands_column', 'footer_show_locations_column',
   'footer_column1_title', 'footer_column2_title', 'footer_column3_title', 'footer_column4_title', 'footer_custom_links',
+  'footer_contact_heading', 'footer_cta_label', 'footer_cta_heading', 'footer_cta_button_text',
   'footer_show_business_info', 'footer_show_quick_nav', 'footer_show_social',
   'footer_business_title', 'footer_business_address', 'footer_business_phone', 'footer_business_phone2', 'footer_business_email',
   'footer_quick_nav_title', 'footer_social_title', 'footer_extra_brands',

@@ -43,7 +43,7 @@ interface WhyChooseUsItem {
 interface WhyChooseUsProps {
   heading?: React.ReactNode
   subtitle?: React.ReactNode
-  eyebrow?: string
+  eyebrow?: React.ReactNode
   items?: WhyChooseUsItem[]
 }
 
