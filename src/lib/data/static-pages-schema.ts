@@ -229,9 +229,13 @@ export const CONTACT_DEFAULTS: ContactContent = {
     visible: true,
     phone: '+971 4 800 736',
     whatsapp: '',
-    email: 'hello@seoexpertsagency.ae',
+    email: 'hello@seoexpertsagency.com',
     address: 'Level 24, Boulevard Plaza Tower 1, Downtown Dubai, UAE',
-    weekday_hours: 'Monday – Friday: 9am – 6pm',
+    // Matches the page's original hardcoded "Working Hours" line exactly —
+    // the admin editor's own default text differs slightly ("Monday –
+    // Friday: 9am – 6pm"), but that field was never rendered anywhere until
+    // now, so this schema's default is what must match the live page.
+    weekday_hours: 'Mon – Fri: 9:00 AM – 6:00 PM (GST / GMT)',
     weekend_hours: 'Saturday – Sunday: Closed',
   },
   form: { visible: true, heading: 'Request a Custom SEO Proposal', success_message: "Thank you! We'll contact you within 24 hours." },
