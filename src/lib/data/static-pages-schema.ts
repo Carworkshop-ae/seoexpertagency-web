@@ -93,7 +93,10 @@ export const HOME_DEFAULTS: HomeContent = {
     heading: "Let's Build Your Search Growth Strategy",
     subtitle: 'Get in touch today for an in-depth competitive search audit, technical roadmap, and predictable organic growth plan.',
     cta_text: 'Book a Free Consultation',
-    phone_text: 'Call +971 4 800 736',
+    // Blank by default — the client asked for "Call Us Directly" gone from
+    // the homepage's final CTA. FinalCTASection now hides the button when
+    // this is empty; an admin can bring it back by typing a label in.
+    phone_text: '',
     phone_link: 'tel:+9714800736',
   },
   services_section: { title: 'Our Core SEO Services', subtitle: 'Data-backed search optimization strategies engineered to scale high-intent traffic, dominate keywords, and grow organic revenue.', eyebrow: 'WHAT WE DELIVER' },

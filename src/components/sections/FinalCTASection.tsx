@@ -46,13 +46,15 @@ export function FinalCTASection({
             <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
           </EditModeLink>
 
-          <EditModeLink
-            href={phoneHref}
-            className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm transition-all"
-          >
-            <Phone size={15} className="text-primary" />
-            {phoneText}
-          </EditModeLink>
+          {phoneText && (
+            <EditModeLink
+              href={phoneHref}
+              className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm border border-slate-200 shadow-sm transition-all"
+            >
+              <Phone size={15} className="text-primary" />
+              {phoneText}
+            </EditModeLink>
+          )}
         </div>
       </div>
     </section>
