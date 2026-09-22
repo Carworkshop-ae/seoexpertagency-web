@@ -50,14 +50,18 @@ export async function Footer({ settings }: FooterProps) {
 
           <div className="lg:col-span-6 flex flex-col sm:flex-row items-start sm:items-center justify-start lg:justify-end gap-3">
             <div className="text-left sm:text-right">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ready to grow?</p>
-              <p className="text-sm font-bold text-white">Get your free custom SEO strategy audit</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <EditableSetting settingKey="footer_cta_label" value={settings.footer_cta_label || 'Ready to grow?'} />
+              </p>
+              <p className="text-sm font-bold text-white">
+                <EditableSetting settingKey="footer_cta_heading" value={settings.footer_cta_heading || 'Get your free custom SEO strategy audit'} />
+              </p>
             </div>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-600 text-white text-xs font-bold shadow-lg transition-all"
             >
-              Request Free Audit
+              <EditableSetting settingKey="footer_cta_button_text" value={settings.footer_cta_button_text || 'Request Free Audit'} />
               <ArrowRight size={14} />
             </Link>
           </div>
@@ -68,7 +72,7 @@ export async function Footer({ settings }: FooterProps) {
           {/* Col 1: Company */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
-              Company
+              <EditableSetting settingKey="footer_column1_title" value={settings.footer_column1_title || 'Company'} />
             </h4>
             <ul className="space-y-2.5 text-slate-400">
               <li><Link href="/" className="hover:text-white hover:underline transition-colors">Home</Link></li>
@@ -84,7 +88,7 @@ export async function Footer({ settings }: FooterProps) {
           {/* Col 2: Contact Info */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
-              Contact &amp; HQ
+              <EditableSetting settingKey="footer_contact_heading" value={settings.footer_contact_heading || 'Contact & HQ'} />
             </h4>
             <div className="space-y-3 text-slate-400">
               <div className="flex items-start gap-2">
