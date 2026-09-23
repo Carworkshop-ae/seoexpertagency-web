@@ -59,3 +59,4 @@ next-env.d.ts
 supabase/.branches
 supabase/snippets
 .git.old/
+.scratch/

@@ -19,6 +19,7 @@ import { createPublicSupabase } from '@/lib/supabase/public'
 import { generateServicePageSchema } from '@/lib/page-engine/schema'
 import { CustomSchemas } from '@/components/seo/CustomSchemas'
 import { sanitizeHTML } from '@/lib/sanitize'
+import { extractEmbeddedFaqs, mergeFaqs } from '@/lib/faq-extraction'
 import { SeoPageEditProvider } from '@/components/inline-edit/SeoPageEditProvider'
 import { EditableText } from '@/components/inline-edit/EditableText'
 import { EditableRichText } from '@/components/inline-edit/EditableRichText'
@@ -109,7 +110,12 @@ export default async function SeoPage({ params }: PageProps) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://seoexpertsagency.ae'
   const pageUrl = `${siteUrl}/${page.slug}`
-  const faqs = (page.faq_json ?? []) as unknown as FAQItem[]
+  // Some pages have their FAQ content typed straight into the Long Description
+  // as plain "Q: ... / A: ..." text instead of the dedicated FAQ repeater —
+  // pull it out here so it renders through the real FAQ accordion (and FAQ
+  // schema) below instead of as a raw text dump in the prose section.
+  const { cleanHtml: overviewHtml, faqs: embeddedFaqs } = extractEmbeddedFaqs(page.overview ?? '')
+  const faqs = mergeFaqs((page.faq_json ?? []) as unknown as FAQItem[], embeddedFaqs)
   const whyChooseUsItems = (page.why_choose_us_json ?? []) as unknown as Array<{ title: string; description: string }>
   const sections = (page.sections_json ?? {}) as SeoPageSections
 
@@ -163,7 +169,7 @@ export default async function SeoPage({ params }: PageProps) {
       initialContent={{
         headline: page.headline,
         subheadline: page.subheadline,
-        overview: page.overview,
+        overview: overviewHtml,
         why_choose_us_heading: page.why_choose_us_heading,
         why_choose_us_json: whyChooseUsItems,
         faq_json: faqs,
@@ -247,10 +253,10 @@ export default async function SeoPage({ params }: PageProps) {
       />
 
       {/* 10. Long-form SEO content */}
-      {page.overview && (
+      {overviewHtml && (
         <section className="py-16 lg:py-20 bg-white border-b border-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <EditableRichText path="overview" value={sanitizeHTML(page.overview)} className="rich-content" />
+            <EditableRichText path="overview" value={sanitizeHTML(overviewHtml)} className="rich-content" />
           </div>
         </section>
       )}
