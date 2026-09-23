@@ -225,12 +225,28 @@ export default function HomeEditor() {
             <AdminInput label="Button Text" value={c.cta_banner.button_text} onChange={e => patch('cta_banner', { button_text: e.target.value })} />
             <AdminInput label="Button Link" value={c.cta_banner.button_link} onChange={e => patch('cta_banner', { button_link: e.target.value })} />
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <AdminInput label="Secondary (Call) Button Text" hint="Leave blank to hide the button entirely." value={c.cta_banner.secondary_text} onChange={e => patch('cta_banner', { secondary_text: e.target.value })} />
+            <AdminInput label="Secondary Button Link" value={c.cta_banner.secondary_link} onChange={e => patch('cta_banner', { secondary_link: e.target.value })} />
+          </div>
           <div>
             <AdminLabel>Background Color</AdminLabel>
             <div className="flex items-center gap-2">
               <input type="color" value={c.cta_banner.bg_color} onChange={e => patch('cta_banner', { bg_color: e.target.value })} className="h-9 w-12 rounded border border-zinc-300" />
               <input value={c.cta_banner.bg_color} onChange={e => patch('cta_banner', { bg_color: e.target.value })} className={inputCls + ' w-32'} />
             </div>
+          </div>
+        </AdminSectionCard>
+
+        {/* 12 Final CTA */}
+        <AdminSectionCard title="Final CTA">
+          <AdminInput label="Badge" value={c.final_cta.badge} onChange={e => patch('final_cta', { badge: e.target.value })} />
+          <AdminInput label="Heading" value={c.final_cta.heading} onChange={e => patch('final_cta', { heading: e.target.value })} />
+          <AdminInput label="Subheadline" value={c.final_cta.subtitle} onChange={e => patch('final_cta', { subtitle: e.target.value })} />
+          <AdminInput label="Button Text" value={c.final_cta.cta_text} onChange={e => patch('final_cta', { cta_text: e.target.value })} />
+          <div className="grid grid-cols-2 gap-3">
+            <AdminInput label="Secondary (Call) Button Text" hint="Leave blank to hide the button entirely." value={c.final_cta.phone_text} onChange={e => patch('final_cta', { phone_text: e.target.value })} />
+            <AdminInput label="Secondary Button Link" value={c.final_cta.phone_link} onChange={e => patch('final_cta', { phone_link: e.target.value })} />
           </div>
         </AdminSectionCard>
 

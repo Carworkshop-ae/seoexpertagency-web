@@ -30,7 +30,7 @@ export function CTABanner({
   subtitle = 'Schedule a 30-minute discovery call with our senior SEO strategists and receive a free comprehensive technical & keyword opportunity audit.',
   ctaLabel = 'Get Your Free SEO Consultation',
   ctaHref = '/contact',
-  secondaryLabel = 'Call Us Directly',
+  secondaryLabel = '',
   secondaryPath,
   secondaryHref = 'tel:+9714800736',
   bgColor,
