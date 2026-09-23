@@ -39,11 +39,25 @@ interface TrustBarProps {
   items?: TrustItem[]
 }
 
+// Tailwind's JIT scanner needs literal class names, so the column count per
+// item total is a lookup rather than an interpolated `lg:grid-cols-${n}` —
+// without this a 4-item bar renders in a 5-col track with a blank trailing
+// column, leaving the row looking left-aligned instead of centered.
+const LG_COLS_CLASS: Record<number, string> = {
+  1: 'lg:grid-cols-1',
+  2: 'lg:grid-cols-2',
+  3: 'lg:grid-cols-3',
+  4: 'lg:grid-cols-4',
+  5: 'lg:grid-cols-5',
+}
+
 export function TrustBar({ items = DEFAULT_SEO_TRUST_ITEMS }: TrustBarProps) {
+  const lgColsClass = LG_COLS_CLASS[Math.min(items.length, 5)] ?? 'lg:grid-cols-5'
+
   return (
     <section className="bg-white py-8 lg:py-10 border-b border-slate-100" aria-label="Agency trust indicators">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <ul className={`grid grid-cols-1 sm:grid-cols-2 ${lgColsClass} gap-4`}>
           {items.map((item, index) => (
             <li
               key={index}
