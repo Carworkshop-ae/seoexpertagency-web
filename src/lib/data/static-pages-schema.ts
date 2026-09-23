@@ -71,7 +71,7 @@ export const HOME_DEFAULTS: HomeContent = {
   blog_preview: { visible: true, heading: 'Latest from Our Blog', count: 3 },
   locations: { visible: true, heading: 'Where We Work' },
   faq: { visible: true, heading: 'Common Questions', faqs: [] },
-  cta_banner: { visible: true, badge: 'Zero Obligation · Custom Strategy', headline: 'Ready to Grow Your Search Visibility?', subheadline: 'Schedule a 30-minute discovery call with our senior SEO strategists and receive a free comprehensive technical & keyword opportunity audit.', button_text: 'Get Your Free SEO Consultation', button_link: '/contact', secondary_text: 'Call Us Directly', secondary_link: 'tel:+9714800736', bg_color: '#0066FF' },
+  cta_banner: { visible: true, badge: 'Zero Obligation · Custom Strategy', headline: 'Ready to Grow Your Search Visibility?', subheadline: 'Schedule a 30-minute discovery call with our senior SEO strategists and receive a free comprehensive technical & keyword opportunity audit.', button_text: 'Get Your Free SEO Consultation', button_link: '/contact', secondary_text: '', secondary_link: 'tel:+9714800736', bg_color: '#0066FF' },
   process_steps: {
     title: 'Our Proven 4-Step SEO Framework',
     subtitle: 'A systematic, repeatable methodology that turns search engines into your most predictable customer acquisition channel.',

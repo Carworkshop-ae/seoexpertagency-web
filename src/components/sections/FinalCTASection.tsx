@@ -21,7 +21,7 @@ interface FinalCTASectionProps {
 
 export function FinalCTASection({
   badge = 'Scale Your Organic Revenue',
-  phoneText = 'Call +971 4 800 736',
+  phoneText = '',
   phonePath,
   phoneHref = 'tel:+9714800736',
   heading = "Let's Build Your Search Growth Strategy",
