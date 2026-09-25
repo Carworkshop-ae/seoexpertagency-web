@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { HeroSection } from '@/components/sections/HeroSection'
 import { HeroLeadForm } from '@/components/sections/HeroLeadForm'
 import { TrustBar } from '@/components/sections/TrustBar'
@@ -107,6 +107,12 @@ export default async function SeoPage({ params }: PageProps) {
   const { slug } = await params
   const page = await getPage(slug.join('/'))
   if (!page) notFound()
+
+  // Admin-configured 301 (Next serves permanent redirects as 308, which
+  // search engines treat identically to 301) — set via Dashboard → SEO tab →
+  // "301 Redirect To" on this page.
+  const redirectTo = (page.seo_json as { redirect_to?: string } | null)?.redirect_to
+  if (redirectTo) permanentRedirect(redirectTo)
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://seoexpertsagency.ae'
   const pageUrl = `${siteUrl}/${page.slug}`

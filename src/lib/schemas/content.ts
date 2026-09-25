@@ -68,6 +68,7 @@ export const CreateServiceSchema = z.object({
   benefits_json: z.array(TitleDescSchema).max(20).default([]),
   process_json: z.array(ProcessStepSchema).max(20).default([]),
   content: z.string().max(200000).optional().nullable(),
+  link_url: z.string().max(500).trim().optional().nullable(),
   ...pageCore,
   ...seoCore,
 })

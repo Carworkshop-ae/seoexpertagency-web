@@ -1,6 +1,7 @@
 'use client'
 
-import { X } from 'lucide-react'
+import { X, Link2 } from 'lucide-react'
+import Link from 'next/link'
 import { SERVICE_ICONS, SERVICE_ICON_MAP, DEFAULT_SERVICE_ICON } from '@/lib/service-icons'
 import { EditableText } from '@/components/inline-edit/EditableText'
 import { IconPicker } from '@/components/inline-edit/IconPicker'
@@ -25,6 +26,7 @@ export function ServiceFeatureCard({ service }: ServiceFeatureCardProps) {
   const description = (draft?.short_description as string | undefined) ?? (service?.shortDescription || '')
   const iconKey = (draft?.icon as string | undefined) ?? (service?.icon || 'search')
   const Icon = SERVICE_ICON_MAP[iconKey] || DEFAULT_SERVICE_ICON
+  const linkUrl = (draft?.link_url as string | undefined) ?? (service?.linkUrl || '')
 
   // Edits are buffered (see AdminEditProvider) — nothing is saved or visible to
   // visitors until "Done Editing".
@@ -46,8 +48,14 @@ export function ServiceFeatureCard({ service }: ServiceFeatureCardProps) {
     </div>
   )
 
-  return (
-    <div className="relative card-premium flex flex-col p-6 sm:p-7 rounded-2xl bg-white border border-slate-200/80 transition-all duration-200">
+  // The whole card is clickable when a link is set — visitors only, so an
+  // admin in edit mode can still click into the text fields below to edit
+  // them instead of navigating away.
+  const cardClassName = 'relative card-premium flex flex-col p-6 sm:p-7 rounded-2xl bg-white border border-slate-200/80 transition-all duration-200'
+  const clickable = !canEdit && Boolean(linkUrl)
+
+  const cardBody = (
+    <>
       {canEdit && id && (
         <button
           type="button"
@@ -81,6 +89,28 @@ export function ServiceFeatureCard({ service }: ServiceFeatureCardProps) {
           onSave={id ? v => save({ short_description: v }) : undefined}
         />
       )}
-    </div>
+
+      {canEdit && id && (
+        <label className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs text-slate-500">
+          <Link2 size={13} className="shrink-0 text-slate-400" />
+          <EditableText
+            as="span"
+            className="flex-1 text-slate-600"
+            value={linkUrl || 'Add a link (e.g. /contact)…'}
+            onSave={v => save({ link_url: v })}
+          />
+        </label>
+      )}
+    </>
   )
+
+  if (clickable) {
+    return (
+      <Link href={linkUrl} className={`${cardClassName} hover:-translate-y-0.5 hover:shadow-lg cursor-pointer`}>
+        {cardBody}
+      </Link>
+    )
+  }
+
+  return <div className={cardClassName}>{cardBody}</div>
 }

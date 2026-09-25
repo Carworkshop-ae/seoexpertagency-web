@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { User, Calendar, ArrowLeft } from 'lucide-react'
@@ -122,6 +122,11 @@ export default async function BlogPostPage({ params }: PageProps) {
   const fallback = FALLBACK_POST_CONTENT[slug]
 
   if (!post && !fallback) notFound()
+
+  // Admin-configured 301 (served as a 308, which search engines treat the
+  // same way) — set via Dashboard → Blog post → SEO tab → "301 Redirect To".
+  const redirectTo = (post?.seo_json as { redirect_to?: string } | null)?.redirect_to
+  if (redirectTo) permanentRedirect(redirectTo)
 
   const title = post?.title ?? fallback!.title
   const excerpt = post?.excerpt ?? fallback!.excerpt

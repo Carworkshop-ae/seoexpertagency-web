@@ -7,7 +7,12 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import type { Json } from '@/types/database'
 
-const SETTINGS_PATHS = ['/', '/about', '/contact', '/brands', '/blog', '/faq']
+// Settings (header/footer/logo/contact info etc.) render on every public
+// page via the root layout, so on-demand revalidation must cover the whole
+// site, not just a handful of top-level routes — a change made here used to
+// go stale on any route not in this list (e.g. /pricing, /services/*,
+// /industries/*, /projects/*, /blog/*, /lp/*) until its own ISR timer fired.
+const SETTINGS_PATHS = ['/', '/about', '/contact', '/brands', '/blog', '/faq', '/pricing', '/projects', '/privacy', '/terms']
 
 const BulkSchema = z.object({
   settings: z.array(z.object({ key: z.string().min(1).max(100), value: z.unknown() })).min(1).max(100),
