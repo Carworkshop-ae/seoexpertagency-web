@@ -18,6 +18,8 @@ export const SeoJsonSchema = z.object({
   meta_description: z.string().max(320).optional(),
   canonical: z.string().max(500).optional(),
   robots: z.enum(ROBOTS_OPTIONS).optional(),
+  // When set, this page 301-redirects to the given path/URL — see middleware.ts.
+  redirect_to: z.string().max(500).optional(),
   og_title: z.string().max(200).optional(),
   og_description: z.string().max(400).optional(),
   og_image: z.string().max(1000).nullable().optional(),

@@ -25,7 +25,7 @@ export function Header({ settings }: HeaderProps) {
                   <Sparkles size={18} />
                 </div>
                 <span className="text-xl font-extrabold tracking-tight text-white">
-                  SEO<span className="text-blue-200">Expert</span><span className="text-blue-100/70 font-semibold text-sm ml-1 hidden sm:inline">Agency</span>
+                  SEO<span className="text-blue-200">Experts</span><span className="text-blue-100/70 font-semibold text-sm ml-1 hidden sm:inline">Agency</span>
                 </span>
               </div>
             )}

@@ -76,6 +76,14 @@ export function SEOPanel({ value, onChange, pageUrl, defaultTitle = '', defaultD
           </div>
           {robots.includes('noindex') && <p className="text-xs text-amber-600 mt-1">⚠️ This page will NOT appear in Google search results.</p>}
         </div>
+
+        <AdminInput
+          label="301 Redirect To"
+          value={v.redirect_to ?? ''}
+          placeholder="/new-page or https://example.com/target"
+          hint="If set, visitors to this page are permanently redirected here instead of seeing its content."
+          onChange={e => set('redirect_to', e.target.value)}
+        />
       </AdminSectionCard>
 
       {/* SECTION 2 — Open Graph */}

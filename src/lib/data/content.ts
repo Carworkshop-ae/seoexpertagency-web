@@ -62,6 +62,7 @@ export const getServices = cache(async (): Promise<SEOServiceData[]> => {
       name: str(r.name) || fb?.name || slug,
       shortDescription: str(r.short_description) || fb?.shortDescription || '',
       icon: str(r.icon) || fb?.icon || 'search',
+      linkUrl: str(r.link_url) || fb?.linkUrl || '',
       startingPrice: str(r.starting_price_label) || fb?.startingPrice || '',
       heroBadge: str(r.hero_badge) || fb?.heroBadge || 'CORE SERVICE',
       headline: str(r.headline) || fb?.headline || str(r.name),

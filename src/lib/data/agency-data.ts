@@ -4,6 +4,8 @@ export interface SEOServiceData {
   name: string
   shortDescription: string
   icon: string
+  /** Optional destination URL that makes the homepage service card clickable. */
+  linkUrl?: string
   startingPrice: string
   heroBadge: string
   headline: string
