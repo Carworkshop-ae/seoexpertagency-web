@@ -10,7 +10,7 @@ import type { UserRole } from '@/types'
 // Roles allowed to edit SEO (includes the restricted seo_editor).
 export const SEO_ROLES: UserRole[] = ['super_admin', 'admin', 'editor', 'seo_editor']
 
-type Table = 'services' | 'industries' | 'projects' | 'locations' | 'static_pages' | 'blog_posts'
+type Table = 'services' | 'industries' | 'projects' | 'locations' | 'static_pages' | 'blog_posts' | 'seo_pages'
 
 interface HandleOpts {
   table: Table

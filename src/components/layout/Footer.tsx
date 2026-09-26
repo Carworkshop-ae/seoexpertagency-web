@@ -1,8 +1,10 @@
 import { EditableSetting } from '@/components/inline-edit/EditableSetting'
+import { EditableLinkList } from '@/components/inline-edit/EditableLinkList'
 import { EditModeLink } from '@/components/inline-edit/EditModeLink'
 import Link from 'next/link'
 import { Sparkles, Mail, Phone, MapPin, ArrowRight } from 'lucide-react'
 import type { SiteSettings } from '@/types/settings'
+import { DEFAULT_SETTINGS } from '@/types/settings'
 import { getServices, getLocations } from '@/lib/data/content'
 
 interface FooterProps {
@@ -42,7 +44,11 @@ export async function Footer({ settings }: FooterProps) {
   const bgColor = settings.footer_background_color || '#0A1128'
   const textColor = settings.footer_text_color || '#FFFFFF'
 
-  const phone = settings.footer_business_phone || '+971 4 800 736'
+  // No `|| fallback` here on purpose — an admin can clear this field to
+  // remove the phone row entirely (see the `{phone && ...}` guard below).
+  // getSettings() already supplies the typed default for a row that's never
+  // been touched, so untouched sites keep showing today's number.
+  const phone = settings.footer_business_phone
   const email = settings.footer_business_email || 'hello@seoexpertsagency.ae'
   const address = settings.footer_business_address || 'Level 24, Boulevard Plaza Tower 1, Downtown Dubai, UAE'
 
@@ -103,49 +109,34 @@ export async function Footer({ settings }: FooterProps) {
         {/* 4-Column Navigation Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 text-xs">
           {/* Col 1: Company */}
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
-              <EditableSetting settingKey="footer_column1_title" value={settings.footer_column1_title || 'Company'} />
-            </h4>
-            <ul className="space-y-2.5 text-slate-400">
-              <li><Link href="/about" className="hover:text-white hover:underline transition-colors">About Our Agency</Link></li>
-              <li><Link href="/projects" className="hover:text-white hover:underline transition-colors">Projects &amp; Case Studies</Link></li>
-              <li><Link href="/pricing" className="hover:text-white hover:underline transition-colors">Pricing &amp; Packages</Link></li>
-              <li><Link href="/blog" className="hover:text-white hover:underline transition-colors">SEO Blog &amp; Insights</Link></li>
-              <li><Link href="/faq" className="hover:text-white hover:underline transition-colors">Frequently Asked Questions</Link></li>
-              <li><Link href="/contact" className="hover:text-white hover:underline transition-colors">Contact Our Team</Link></li>
-            </ul>
-          </div>
+          <EditableLinkList
+            settingKey="footer_company_links"
+            items={settings.footer_company_links?.length ? settings.footer_company_links : DEFAULT_SETTINGS.footer_company_links}
+            heading={<EditableSetting settingKey="footer_column1_title" value={settings.footer_column1_title || 'Company'} />}
+            headingClassName="text-xs font-bold uppercase tracking-wider text-white mb-4"
+            listClassName="space-y-2.5 text-slate-400"
+            linkClassName="hover:text-white hover:underline transition-colors"
+          />
 
           {/* Col 2: Popular SEO Services */}
-          {popularServices.length > 0 && (
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Popular SEO Services</h4>
-              <ul className="space-y-2.5 text-slate-400">
-                {popularServices.map(service => (
-                  <li key={service.slug}>
-                    {service.linkUrl ? (
-                      <Link href={service.linkUrl} className="hover:text-white hover:underline transition-colors">{service.name}</Link>
-                    ) : (
-                      <span>{service.name}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <EditableLinkList
+            settingKey="footer_services_links"
+            items={settings.footer_services_links?.length ? settings.footer_services_links : popularServices.map(s => ({ label: s.name, url: s.linkUrl || '' }))}
+            heading="Popular SEO Services"
+            headingClassName="text-xs font-bold uppercase tracking-wider text-white mb-4"
+            listClassName="space-y-2.5 text-slate-400"
+            linkClassName="hover:text-white hover:underline transition-colors"
+          />
 
           {/* Col 3: Popular Areas */}
-          {popularAreas.length > 0 && (
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Popular Areas</h4>
-              <ul className="space-y-2.5 text-slate-400">
-                {popularAreas.map(area => (
-                  <li key={area.slug}>SEO Agency in {area.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <EditableLinkList
+            settingKey="footer_areas_links"
+            items={settings.footer_areas_links?.length ? settings.footer_areas_links : popularAreas.map(a => ({ label: `SEO Agency in ${a.name}`, url: '' }))}
+            heading="Popular Areas"
+            headingClassName="text-xs font-bold uppercase tracking-wider text-white mb-4"
+            listClassName="space-y-2.5 text-slate-400"
+            linkClassName="hover:text-white hover:underline transition-colors"
+          />
 
           {/* Col 4: Contact & HQ */}
           <div>
@@ -157,10 +148,12 @@ export async function Footer({ settings }: FooterProps) {
                 <MapPin size={15} className="text-primary shrink-0 mt-0.5" />
                 <EditableSetting settingKey="footer_business_address" className="leading-relaxed" value={address} />
               </div>
-              <div className="flex items-center gap-2">
-                <Phone size={15} className="text-primary shrink-0" />
-                <EditModeLink href={`tel:${phone.replace(/[^0-9+]/g, '')}`} className="hover:text-white transition-colors"><EditableSetting settingKey="footer_business_phone" value={phone} /></EditModeLink>
-              </div>
+              {phone && (
+                <div className="flex items-center gap-2">
+                  <Phone size={15} className="text-primary shrink-0" />
+                  <EditModeLink href={`tel:${phone.replace(/[^0-9+]/g, '')}`} className="hover:text-white transition-colors"><EditableSetting settingKey="footer_business_phone" value={phone} /></EditModeLink>
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <Mail size={15} className="text-primary shrink-0" />
                 <EditModeLink href={`mailto:${email}`} className="hover:text-white transition-colors"><EditableSetting settingKey="footer_business_email" value={email} /></EditModeLink>
