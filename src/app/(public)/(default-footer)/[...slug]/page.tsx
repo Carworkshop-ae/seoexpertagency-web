@@ -25,7 +25,7 @@ import { EditableText } from '@/components/inline-edit/EditableText'
 import { EditableRichText } from '@/components/inline-edit/EditableRichText'
 import type { FAQItem, BlogPost } from '@/types'
 import type { SeoJson } from '@/lib/schemas/seo'
-import { getHreflangCode } from '@/lib/market'
+import { resolveSEO, seoToMetadata } from '@/lib/seo'
 
 // A freeform "general" SEO landing page. Its slug isn't nested under any fixed
 // prefix, so this catch-all only ever fires for a first segment that doesn't
@@ -89,16 +89,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = page.seo_title || `${page.headline} | SEO Expert Agency`
   const description = page.seo_description || page.subheadline || ''
 
-  return {
-    title,
-    description,
-    keywords: page.meta_keyword || undefined,
-    alternates: {
-      canonical: url,
-      languages: { [getHreflangCode()]: url, 'x-default': url },
-    },
-    openGraph: { title, description, url, type: 'website' },
-  }
+  const seo = resolveSEO(page.seo_json, { title, description, url })
+  return seoToMetadata(seo, url, page.meta_keyword || undefined)
 }
 
 export const revalidate = 3600

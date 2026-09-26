@@ -163,26 +163,53 @@ export function AdminEditProvider({ children }: { children: React.ReactNode }) {
     setEditModeState(v)
   }, [rerender])
 
-  // "Done Editing": publish every buffered change, once.
+  // "Done Editing": publish every buffered change, once. Every committer and
+  // card op is attempted independently — one failing field or card must not
+  // block the rest of an otherwise-unrelated batch from publishing.
   const done = useCallback(async () => {
     if (historyRef.current.length === 0) { setEditModeState(false); return }
     setPublishing(true)
     try {
-      for (const commit of committers.current.values()) await commit()
-      await commitCardState(cardsRef.current)
-      historyRef.current = []
-      futureRef.current = []
-      rerender()
-      // Created cards come back from the server on refresh; patches/removals
-      // stay applied until then so nothing flickers back to the old value.
-      cardsRef.current = { ...cardsRef.current, created: [] }
-      setCardState(cardsRef.current)
-      setEditModeState(false)
-      toast.success('Changes published')
-      router.refresh()
-      settleTimer.current = setTimeout(() => { cardsRef.current = EMPTY_CARD_STATE; setCardState(EMPTY_CARD_STATE) }, 4000)
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Publishing failed — your edits are still here, try again')
+      const errors: string[] = []
+      let committerCount = 0
+      for (const commit of committers.current.values()) {
+        committerCount++
+        try { await commit() } catch (err) { errors.push(err instanceof Error ? err.message : 'Something went wrong') }
+      }
+      const before = cardsRef.current
+      const cardOpCount = Object.keys(before.removed).length + Object.keys(before.patches).length + before.created.length
+      const cardResult = await commitCardState(before)
+      errors.push(...cardResult.errors)
+
+      // Only what's still failing keeps showing as "Unpublished" — everything
+      // else has been persisted and is safe to leave, even on partial failure.
+      cardsRef.current = cardResult.remaining
+      setCardState(cardResult.remaining)
+
+      const totalOps = committerCount + cardOpCount
+      const somethingPublished = errors.length < totalOps
+
+      if (errors.length === 0) {
+        historyRef.current = []
+        futureRef.current = []
+        rerender()
+        // Created cards come back from the server on refresh; patches/removals
+        // stay applied until then so nothing flickers back to the old value.
+        cardsRef.current = { ...cardsRef.current, created: [] }
+        setCardState(cardsRef.current)
+        setEditModeState(false)
+        toast.success('Changes published')
+        router.refresh()
+        settleTimer.current = setTimeout(() => { cardsRef.current = EMPTY_CARD_STATE; setCardState(EMPTY_CARD_STATE) }, 4000)
+      } else {
+        rerender()
+        if (somethingPublished) router.refresh()
+        const [first, ...rest] = errors
+        const suffix = rest.length > 0 ? ` (+${rest.length} more)` : ''
+        toast.error(somethingPublished
+          ? `${first}${suffix} — everything else published`
+          : `${first}${suffix} — your edits are still here, try again`)
+      }
     } finally {
       setPublishing(false)
     }

@@ -22,6 +22,11 @@ export interface FooterLink {
   order: number
 }
 
+export interface FooterLinkItem {
+  label: string
+  url: string
+}
+
 export type ButtonPosition = 'bottom-right' | 'bottom-left'
 
 export interface SiteSettings {
@@ -96,6 +101,15 @@ export interface SiteSettings {
   footer_social_title: string
   // Optional extra brand links appended after the auto (DB) brands list.
   footer_extra_brands: NavSubItem[]
+
+  // Footer link columns (Company / Popular SEO Services / Popular Areas) —
+  // each independently add/remove/edit-URL editable from the footer itself.
+  // Services/Areas start out mirroring the live services/locations tables
+  // (see Footer.tsx's fallback) until an admin edits the list, at which point
+  // it becomes this fully manual, persisted array.
+  footer_company_links: FooterLinkItem[]
+  footer_services_links: FooterLinkItem[]
+  footer_areas_links: FooterLinkItem[]
 
   // Blog defaults (global CTA + author fallback)
   blog_cta_headline: string
@@ -242,6 +256,19 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   footer_social_title: 'Connect With Us',
   footer_extra_brands: [],
 
+  footer_company_links: [
+    { label: 'About Our Agency', url: '/about' },
+    { label: 'Projects & Case Studies', url: '/projects' },
+    { label: 'Pricing & Packages', url: '/pricing' },
+    { label: 'SEO Blog & Insights', url: '/blog' },
+    { label: 'Frequently Asked Questions', url: '/faq' },
+    { label: 'Contact Our Team', url: '/contact' },
+  ],
+  // Empty by default — Footer.tsx falls back to the live services/locations
+  // tables until an admin edits one of these lists.
+  footer_services_links: [],
+  footer_areas_links: [],
+
   blog_cta_headline: 'Ready to Scale Your Organic Search Traffic?',
   blog_cta_subheadline: 'Get a comprehensive 20-page technical audit and keyword opportunity roadmap.',
   blog_cta_button_text: 'Get Free Proposal',
@@ -300,6 +327,7 @@ export const PUBLIC_SETTING_KEYS: Array<keyof SiteSettings> = [
   'footer_show_business_info', 'footer_show_quick_nav', 'footer_show_social',
   'footer_business_title', 'footer_business_address', 'footer_business_phone', 'footer_business_phone2', 'footer_business_email',
   'footer_quick_nav_title', 'footer_social_title', 'footer_extra_brands',
+  'footer_company_links', 'footer_services_links', 'footer_areas_links',
   'social_instagram_url', 'social_facebook_url', 'social_linkedin_url', 'social_youtube_url', 'social_tiktok_url', 'social_twitter_url', 'social_google_business_url',
   'announcement_bar_enabled', 'announcement_bar_text', 'announcement_bar_bg_color', 'announcement_bar_text_color', 'announcement_bar_link',
   'ga4_id', 'gtm_id', 'gsc_meta', 'default_meta_title', 'default_meta_description', 'default_og_image',

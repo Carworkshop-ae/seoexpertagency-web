@@ -9,7 +9,9 @@ import { AdminButton } from '@/components/admin/ui/AdminButton'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { Repeater, inputCls } from '@/components/admin/ui/Repeater'
 import { generateSlug } from '@/lib/page-engine/slugify'
+import { EntitySeoTab } from '@/components/admin/EntitySeoTab'
 import type { FieldValue } from '@/components/admin/content/ContentForm'
+import type { SeoJson } from '@/lib/schemas/seo'
 
 // Visually distinct from the shared ContentForm used by Services/Industries/
 // Projects/Locations — this content type is deliberately styled to match the
@@ -238,6 +240,22 @@ export function SeoPageForm({ id, initial }: Props) {
           ]}
         />
       </GreenSection>
+
+      {/* Only shown once the page exists — it needs a real id to PUT to. */}
+      {id && (
+        <details className="rounded-lg overflow-hidden border border-zinc-200 mb-5">
+          <summary className="cursor-pointer px-5 py-3.5 text-sm font-semibold text-zinc-800 bg-white">Advanced SEO (robots, canonical, redirect, schema)</summary>
+          <div className="px-5 pb-5 border-t border-zinc-200 pt-4 bg-white">
+            <EntitySeoTab
+              endpoint={`/api/admin/seo-pages/${id}/seo`}
+              initial={(v.seo_json ?? {}) as unknown as SeoJson}
+              pageUrl={`https://seoexpertsagency.ae/${slug}`}
+              defaultTitle={str('seo_title') || str('headline')}
+              defaultDescription={str('seo_description') || str('subheadline')}
+            />
+          </div>
+        </details>
+      )}
 
       {/* Sticky, not fixed: a `fixed` bar spans the whole viewport regardless of
           the sidebar, painting over its bottom edge (it covers Logout). Sticky
