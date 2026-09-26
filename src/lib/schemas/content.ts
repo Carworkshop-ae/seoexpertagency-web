@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { SeoJsonSchema } from '@/lib/schemas/seo'
 
 // Validation for the four CMS-managed marketing content types. They share a
 // common core (identity, SEO, status) plus a per-type set of JSON section
@@ -151,6 +152,10 @@ export const CreateSeoPageSchema = z.object({
   // Banner, Final CTA, Testimonials, section headers) — untyped on purpose,
   // same as static_pages.content_json; shape is owned by the public template.
   sections_json: z.record(z.string(), z.unknown()).optional(),
+  // Lets the "new page" form save Advanced SEO (robots, canonical, redirect,
+  // schema) in the same create request — a new page has no id yet for the
+  // dedicated PUT /api/admin/seo-pages/:id/seo route that the edit form uses.
+  seo_json: SeoJsonSchema.optional(),
   ...seoCore,
 })
 export const UpdateSeoPageSchema = CreateSeoPageSchema.partial()

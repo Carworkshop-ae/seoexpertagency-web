@@ -10,6 +10,7 @@ import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { Repeater, inputCls } from '@/components/admin/ui/Repeater'
 import { generateSlug } from '@/lib/page-engine/slugify'
 import { EntitySeoTab } from '@/components/admin/EntitySeoTab'
+import { SEOPanel } from '@/components/admin/SEOPanel'
 import type { FieldValue } from '@/components/admin/content/ContentForm'
 import type { SeoJson } from '@/lib/schemas/seo'
 
@@ -241,11 +242,15 @@ export function SeoPageForm({ id, initial }: Props) {
         />
       </GreenSection>
 
-      {/* Only shown once the page exists — it needs a real id to PUT to. */}
-      {id && (
-        <details className="rounded-lg overflow-hidden border border-zinc-200 mb-5">
-          <summary className="cursor-pointer px-5 py-3.5 text-sm font-semibold text-zinc-800 bg-white">Advanced SEO (robots, canonical, redirect, schema)</summary>
-          <div className="px-5 pb-5 border-t border-zinc-200 pt-4 bg-white">
+      {/* Shown on both create and edit. Editing an existing page saves straight
+          to its own /seo endpoint via EntitySeoTab (same pattern as every other
+          entity's SEO tab). A new page has no id to PUT to yet, so seo_json is
+          edited inline here instead and goes out with the page's own create
+          POST below. */}
+      <details className="rounded-lg overflow-hidden border border-zinc-200 mb-5">
+        <summary className="cursor-pointer px-5 py-3.5 text-sm font-semibold text-zinc-800 bg-white">Advanced SEO (robots, canonical, redirect, schema)</summary>
+        <div className="px-5 pb-5 border-t border-zinc-200 pt-4 bg-white">
+          {id ? (
             <EntitySeoTab
               endpoint={`/api/admin/seo-pages/${id}/seo`}
               initial={(v.seo_json ?? {}) as unknown as SeoJson}
@@ -253,9 +258,20 @@ export function SeoPageForm({ id, initial }: Props) {
               defaultTitle={str('seo_title') || str('headline')}
               defaultDescription={str('seo_description') || str('subheadline')}
             />
-          </div>
-        </details>
-      )}
+          ) : (
+            <>
+              <SEOPanel
+                value={(v.seo_json ?? {}) as unknown as SeoJson}
+                onChange={next => set('seo_json', next as unknown as FieldValue)}
+                pageUrl={`https://seoexpertsagency.ae/${slug}`}
+                defaultTitle={str('seo_title') || str('headline')}
+                defaultDescription={str('seo_description') || str('subheadline')}
+              />
+              <p className="text-xs text-zinc-500 mt-3">Saved automatically with the page when you click Save below.</p>
+            </>
+          )}
+        </div>
+      </details>
 
       {/* Sticky, not fixed: a `fixed` bar spans the whole viewport regardless of
           the sidebar, painting over its bottom edge (it covers Logout). Sticky
